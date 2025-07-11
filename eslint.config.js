@@ -17,6 +17,11 @@ export default [
         sourceType: 'module',
         project: './tsconfig.json',
       },
+      globals: {
+        global: 'readonly',
+        console: 'readonly',
+        URL: 'readonly',
+      },
     },
     plugins: {
       '@typescript-eslint': ts,
@@ -40,6 +45,11 @@ export default [
         ecmaVersion: 2022,
         sourceType: 'module',
         extraFileExtensions: ['.svelte'],
+      },
+      globals: {
+        global: 'readonly',
+        console: 'readonly',
+        URL: 'readonly',
       },
     },
     plugins: {

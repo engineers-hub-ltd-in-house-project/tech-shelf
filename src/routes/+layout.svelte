@@ -24,7 +24,7 @@
           <a
             href="/books"
             class="text-surface-600 dark:text-surface-300 hover:text-primary-500 transition-colors"
-            >書籍</a
+            >電子書籍</a
           >
         </div>
 
@@ -32,7 +32,7 @@
           <a href="/login" class="btn variant-filled-primary">ログイン</a>
         </div>
 
-        <button class="lg:hidden btn btn-sm variant-ghost">
+        <button class="lg:hidden btn btn-sm variant-ghost" aria-label="メニュー">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               stroke-linecap="round"

@@ -37,6 +37,8 @@ model Book {
   price       Float
   currency    String    @default("JPY")
   language    String    @default("ja")
+  category    String    @default("other")
+  difficulty  String    @default("intermediate")
   isPublished Boolean   @default(false)
   publishedAt DateTime?
   createdAt   DateTime  @default(now())
