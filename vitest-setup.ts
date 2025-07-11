@@ -1,14 +1,21 @@
 import '@testing-library/jest-dom/vitest';
+import { vi } from 'vitest';
 
-// Mock SvelteKit environment
+// Suppress Svelte 5 warnings in tests
+const originalConsoleWarn = console.warn;
+console.warn = (...args) => {
+  if (args[0]?.includes?.('hydration_mismatch')) return;
+  originalConsoleWarn(...args);
+};
+
+// Mock SvelteKit modules
 vi.mock('$app/environment', () => ({
-  browser: false,
+  browser: true,
   dev: true,
   building: false,
   version: 'test',
 }));
 
-// Mock SvelteKit navigation
 vi.mock('$app/navigation', () => ({
   goto: vi.fn(),
   invalidate: vi.fn(),
@@ -17,16 +24,17 @@ vi.mock('$app/navigation', () => ({
   preloadData: vi.fn(),
 }));
 
-// Mock SvelteKit stores
-vi.mock('$app/stores', () => ({
-  page: {
-    subscribe: vi.fn(),
-  },
-  navigating: {
-    subscribe: vi.fn(),
-  },
-  updated: {
-    subscribe: vi.fn(),
-    check: vi.fn(),
-  },
-}));
+vi.mock('$app/stores', () => {
+  const readable = (value) => ({
+    subscribe: (fn) => {
+      fn(value);
+      return () => {};
+    },
+  });
+
+  return {
+    page: readable({}),
+    navigating: readable(null),
+    updated: readable(false),
+  };
+});

@@ -1,5 +1,6 @@
 import { defineConfig } from 'vitest/config';
 import { sveltekit } from '@sveltejs/kit/vite';
+import path from 'path';
 
 export default defineConfig({
   plugins: [sveltekit()],
@@ -12,11 +13,10 @@ export default defineConfig({
       reporter: ['text', 'json', 'html'],
       exclude: ['node_modules/', '.svelte-kit/', 'build/', 'src/app.d.ts', '**/*.config.*'],
     },
-    alias: {
-      $lib: '/src/lib',
-    },
   },
-  ssr: {
-    noExternal: ['@testing-library/svelte'],
+  resolve: {
+    alias: {
+      $lib: path.resolve('./src/lib'),
+    },
   },
 });
