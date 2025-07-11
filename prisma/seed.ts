@@ -21,6 +21,7 @@ async function main() {
       email: 'test@example.com',
       name: 'テストユーザー',
       avatar: 'https://avatars.githubusercontent.com/u/1?v=4',
+      role: 'author',
     },
   });
 

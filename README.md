@@ -6,13 +6,13 @@ Tech Shelfは、技術書籍の閲覧と配信に特化したWebプラットフ�
 
 ## 主な機能
 
-- 📚 電子書籍の閲覧（EPUB/PDF対応）
-- ✍️ 技術ブログ機能
-- 🔖 ブックマーク・ハイライト機能
-- 📊 読書進捗管理
-- 🔐 マルチアカウント対応（Google/GitHub認証）
-- 💳 Stripe決済統合
-- 🔍 高速検索（MeiliSearch）
+- 電子書籍の閲覧（EPUB/PDF対応）
+- 技術ブログ機能
+- ブックマーク・ハイライト機能
+- 読書進捗管理
+- マルチアカウント対応（Google/GitHub認証）
+- Stripe決済統合
+- 高速検索（MeiliSearch）
 
 ## 技術スタック
 
@@ -32,33 +32,25 @@ Tech Shelfは、技術書籍の閲覧と配信に特化したWebプラットフ�
 
 ### 前提条件
 
-- Node.js 18以上
+- Node.js 22以上
 - npm または pnpm
 
-### インストール
+詳細なセットアップ手順については [セットアップガイド](docs/setup-guide.md) を参照してください。
+
+### クイックスタート
 
 ```bash
 # 依存関係のインストール
 npm install
 
-# 開発サーバーの起動
-npm run dev
+# 環境変数のセットアップ
+cp .env.example .env
 
-# ブラウザで開く
-npm run dev -- --open
-```
-
-### データベースセットアップ
-
-```bash
-# Prismaクライアントの生成
-npx prisma generate
-
-# マイグレーションの実行
+# データベースの初期化
 npx prisma migrate dev
 
-# 初期データの投入
-npx prisma db seed
+# 開発サーバーの起動
+npm run dev
 ```
 
 ## プロジェクト構成
@@ -80,6 +72,10 @@ tech-shelf/
 │   └── articles/       # 記事原稿
 └── tests/              # テストファイル
 ```
+
+## 認証システム（開発環境）
+
+開発環境ではモック認証システムを使用しています。詳細は [セットアップガイド](docs/setup-guide.md#認証システムの使い方) を参照してください。
 
 ## 開発コマンド
 

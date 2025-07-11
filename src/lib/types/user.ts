@@ -2,7 +2,8 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  avatar?: string;
+  avatar?: string | undefined;
+  role: 'reader' | 'author' | 'admin';
   providers: AuthProvider[];
   purchasedBooks: string[];
   createdAt: Date;

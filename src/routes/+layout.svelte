@@ -1,5 +1,22 @@
-<script>
+<script lang="ts">
   import '../app.css';
+  import { auth } from '$lib/stores/auth';
+  import { onMount } from 'svelte';
+  import type { LayoutData } from './$types';
+
+  export let data: LayoutData;
+
+  // Initialize auth state from server data
+  $: if (data.user) {
+    auth.setUser(data.user, null);
+  } else {
+    auth.clear();
+  }
+
+  // For development, we're using mock auth, so no need for Supabase listeners
+  onMount(() => {
+    // In production, you would enable Supabase auth listeners here
+  });
 </script>
 
 <div class="min-h-screen bg-surface-50 dark:bg-surface-900">
@@ -28,8 +45,21 @@
           >
         </div>
 
-        <div class="flex items-center">
-          <a href="/login" class="btn variant-filled-primary">ログイン</a>
+        <div class="flex items-center gap-4">
+          {#if $auth.user}
+            <a
+              href="/profile"
+              class="text-surface-600 dark:text-surface-300 hover:text-primary-500 transition-colors"
+            >
+              {$auth.user.name}
+            </a>
+            <form method="POST" action="/logout">
+              <button type="submit" class="btn variant-ghost">ログアウト</button>
+            </form>
+          {:else}
+            <a href="/login" class="btn variant-ghost">ログイン</a>
+            <a href="/register" class="btn variant-filled-primary">登録</a>
+          {/if}
         </div>
 
         <button class="lg:hidden btn btn-sm variant-ghost" aria-label="メニュー">
