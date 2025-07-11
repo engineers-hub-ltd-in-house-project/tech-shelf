@@ -7,7 +7,7 @@ SvelteKitを使用して、ブログ機能と電子書籍閲覧・配信機能�
 ## 技術スタック
 
 - **フロントエンド**: SvelteKit v2, Svelte 5, TypeScript 5.0+
-- **スタイリング**: Tailwind CSS + DaisyUI
+- **スタイリング**: Tailwind CSS v4 + Skeleton UI v3
 - **データベース**: Supabase (本番) + SQLite (ローカル開発)
 - **ORM**: Prisma (SQLite/PostgreSQL両対応)
 - **認証**: Supabase Auth (マルチプロバイダー対応)
@@ -16,6 +16,30 @@ SvelteKitを使用して、ブログ機能と電子書籍閲覧・配信機能�
 - **ファイルストレージ**: Supabase Storage (本番) + ローカルファイル (開発)
 - **デプロイ**: Vercel または Netlify
 - **電子書籍**: epub.js, PDF.js
+
+## 現在の実装状況 (2025年7月11日)
+
+### 完了済み
+
+- ✅ 基本的なプロジェクト構造の構築
+- ✅ Tailwind CSS v4 + Skeleton UI v3の統合
+- ✅ Prismaスキーマの設計（User, Book, Chapter, Purchase, ReadingSession, Bookmark, BlogPost, Tag）
+- ✅ ブログ機能の基本実装（一覧、詳細、タグ、RSS/Atom配信）
+- ✅ トップページの実装
+- ✅ 基本的なレイアウトとナビゲーション
+
+### 実装中
+
+- 🔄 電子書籍機能の実装
+
+### 未実装
+
+- ❌ 書籍一覧・詳細ページ
+- ❌ 電子書籍リーダー機能
+- ❌ 認証機能（Supabase Auth）
+- ❌ 管理画面
+- ❌ 決済機能（Stripe）
+- ❌ 検索機能（MeiliSearch）
 
 ## データストア設計
 
