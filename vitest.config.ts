@@ -12,10 +12,11 @@ export default defineConfig({
       reporter: ['text', 'json', 'html'],
       exclude: ['node_modules/', '.svelte-kit/', 'build/', 'src/app.d.ts', '**/*.config.*'],
     },
-  },
-  resolve: {
     alias: {
       $lib: '/src/lib',
     },
+  },
+  ssr: {
+    noExternal: ['@testing-library/svelte'],
   },
 });
