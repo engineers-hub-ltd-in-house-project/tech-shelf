@@ -16,21 +16,21 @@
 </svelte:head>
 
 <!-- ヒーローセクション -->
-<section class="hero min-h-screen bg-gradient-to-r from-primary to-secondary">
-  <div class="hero-content text-center">
-    <div class="max-w-md">
-      <h1 class="text-5xl font-bold text-primary-content">Tech Shelf</h1>
-      <p class="py-6 text-primary-content/80">プログラミングと技術の学習プラットフォーム</p>
-      <div class="space-x-4">
-        <a href="/blog" class="btn btn-primary">ブログを読む</a>
-        <a href="/books" class="btn btn-outline btn-primary">書籍を見る</a>
-      </div>
+<section
+  class="min-h-screen bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center"
+>
+  <div class="text-center px-4">
+    <h1 class="text-5xl font-bold text-white mb-6">Tech Shelf</h1>
+    <p class="text-xl text-white/90 mb-8">プログラミングと技術の学習プラットフォーム</p>
+    <div class="flex gap-4 justify-center">
+      <a href="/blog" class="btn variant-filled">ブログを読む</a>
+      <a href="/books" class="btn variant-ghost-surface">書籍を見る</a>
     </div>
   </div>
 </section>
 
 <!-- 最新のブログ記事 -->
-<section class="py-16 bg-base-100">
+<section class="py-16 bg-surface-50 dark:bg-surface-900">
   <div class="container mx-auto px-4">
     <h2 class="text-3xl font-bold text-center mb-12">最新のブログ記事</h2>
     {#if recentPosts.length > 0}
@@ -40,7 +40,7 @@
         {/each}
       </div>
       <div class="text-center mt-8">
-        <a href="/blog" class="btn btn-primary">すべての記事を見る</a>
+        <a href="/blog" class="btn variant-filled-primary">すべての記事を見る</a>
       </div>
     {:else}
       <div class="text-center">
@@ -51,35 +51,35 @@
 </section>
 
 <!-- 最新の書籍 -->
-<section class="py-16 bg-base-200">
+<section class="py-16 bg-surface-100 dark:bg-surface-800">
   <div class="container mx-auto px-4">
     <h2 class="text-3xl font-bold text-center mb-12">最新の書籍</h2>
     {#if recentBooks.length > 0}
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {#each recentBooks as book}
-          <div class="card bg-base-100 shadow-xl">
+          <div class="card bg-surface-100 dark:bg-surface-800 shadow-xl">
             {#if book.coverImage}
-              <figure>
+              <header>
                 <img src={book.coverImage} alt={book.title} class="w-full h-48 object-cover" />
-              </figure>
+              </header>
             {/if}
-            <div class="card-body">
-              <h3 class="card-title">{book.title}</h3>
-              <p class="text-base-content/70">{book.description}</p>
-              <div class="flex flex-wrap gap-2 mt-2">
+            <div class="p-4 space-y-4">
+              <h3 class="h4 font-bold">{book.title}</h3>
+              <p class="text-surface-600 dark:text-surface-400">{book.description}</p>
+              <div class="flex flex-wrap gap-2">
                 {#each book.tags as { tag }}
-                  <span class="badge badge-secondary badge-sm">{tag.name}</span>
+                  <span class="badge variant-soft-secondary">{tag.name}</span>
                 {/each}
               </div>
-              <div class="card-actions justify-end">
-                <a href="/books/{book.id}" class="btn btn-primary btn-sm">詳細を見る</a>
+              <div class="flex justify-end">
+                <a href="/books/{book.id}" class="btn btn-sm variant-filled-primary">詳細を見る</a>
               </div>
             </div>
           </div>
         {/each}
       </div>
       <div class="text-center mt-8">
-        <a href="/books" class="btn btn-primary">すべての書籍を見る</a>
+        <a href="/books" class="btn variant-filled-primary">すべての書籍を見る</a>
       </div>
     {:else}
       <div class="text-center">
@@ -90,20 +90,15 @@
 </section>
 
 <!-- 特徴セクション -->
-<section class="py-16 bg-base-100">
+<section class="py-16 bg-surface-50 dark:bg-surface-900">
   <div class="container mx-auto px-4">
     <h2 class="text-3xl font-bold text-center mb-12">Tech Shelfの特徴</h2>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
       <div class="text-center">
         <div
-          class="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4"
+          class="w-16 h-16 bg-primary-500 rounded-full flex items-center justify-center mx-auto mb-4"
         >
-          <svg
-            class="w-8 h-8 text-primary-content"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
+          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
@@ -113,20 +108,15 @@
           </svg>
         </div>
         <h3 class="text-xl font-bold mb-2">豊富な学習コンテンツ</h3>
-        <p class="text-base-content/70">
+        <p class="text-surface-600 dark:text-surface-400">
           ブログ記事から体系的な電子書籍まで、様々な形式の学習コンテンツを提供
         </p>
       </div>
       <div class="text-center">
         <div
-          class="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4"
+          class="w-16 h-16 bg-primary-500 rounded-full flex items-center justify-center mx-auto mb-4"
         >
-          <svg
-            class="w-8 h-8 text-primary-content"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
+          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
@@ -136,18 +126,15 @@
           </svg>
         </div>
         <h3 class="text-xl font-bold mb-2">実践的な内容</h3>
-        <p class="text-base-content/70">現場で使える実践的な知識とスキルを身につけることができる</p>
+        <p class="text-surface-600 dark:text-surface-400">
+          現場で使える実践的な知識とスキルを身につけることができる
+        </p>
       </div>
       <div class="text-center">
         <div
-          class="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4"
+          class="w-16 h-16 bg-primary-500 rounded-full flex items-center justify-center mx-auto mb-4"
         >
-          <svg
-            class="w-8 h-8 text-primary-content"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
+          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
@@ -157,7 +144,9 @@
           </svg>
         </div>
         <h3 class="text-xl font-bold mb-2">コミュニティ</h3>
-        <p class="text-base-content/70">同じ技術を学ぶ仲間と情報交換や議論を行うことができる</p>
+        <p class="text-surface-600 dark:text-surface-400">
+          同じ技術を学ぶ仲間と情報交換や議論を行うことができる
+        </p>
       </div>
     </div>
   </div>

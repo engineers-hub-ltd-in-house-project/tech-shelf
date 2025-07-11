@@ -13,35 +13,37 @@
   };
 </script>
 
-<article class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow">
+<article
+  class="card bg-surface-100 dark:bg-surface-800 shadow-xl hover:shadow-2xl transition-shadow"
+>
   {#if post.coverImage}
-    <figure>
+    <header>
       <img src={post.coverImage} alt={post.title} class="w-full h-48 object-cover" />
-    </figure>
+    </header>
   {/if}
 
-  <div class="card-body">
-    <h2 class="card-title">
-      <a {href} class="hover:text-primary transition-colors">
+  <div class="p-4 space-y-4">
+    <h2 class="h4 font-bold">
+      <a {href} class="hover:text-primary-500 transition-colors">
         {post.title}
       </a>
     </h2>
 
     {#if post.excerpt}
-      <p class="text-base-content/70">{post.excerpt}</p>
+      <p class="text-surface-600 dark:text-surface-400">{post.excerpt}</p>
     {/if}
 
-    <div class="flex flex-wrap gap-2 mt-2">
+    <div class="flex flex-wrap gap-2">
       {#each post.tags as { tag }}
-        <span class="badge badge-primary badge-sm">{tag.name}</span>
+        <span class="badge variant-soft-primary">{tag.name}</span>
       {/each}
     </div>
 
-    <div class="card-actions justify-between items-center mt-4">
-      <span class="text-sm text-base-content/60">
+    <div class="flex justify-between items-center">
+      <span class="text-sm text-surface-500 dark:text-surface-500">
         {formatDate(post.publishedAt || post.createdAt)}
       </span>
-      <a {href} class="btn btn-primary btn-sm">続きを読む</a>
+      <a {href} class="btn btn-sm variant-filled-primary">続きを読む</a>
     </div>
   </div>
 </article>
