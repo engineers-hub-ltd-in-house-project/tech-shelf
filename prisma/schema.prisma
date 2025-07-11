@@ -1,0 +1,190 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String            @id @default(cuid())
+  email           String            @unique
+  name            String
+  avatar          String?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  
+  // Relations
+  purchasedBooks  Purchase[]
+  readingSessions ReadingSession[]
+  bookmarks       Bookmark[]
+  authoredBooks   Book[]           @relation("BookAuthor")
+  blogPosts       BlogPost[]
+  
+  @@map("users")
+}
+
+model Book {
+  id          String    @id @default(cuid())
+  title       String
+  author      String
+  description String
+  coverImage  String?
+  price       Float
+  currency    String    @default("JPY")
+  language    String    @default("ja")
+  isPublished Boolean   @default(false)
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relations
+  authorId    String
+  authorUser  User        @relation("BookAuthor", fields: [authorId], references: [id])
+  chapters    Chapter[]
+  purchases   Purchase[]
+  sessions    ReadingSession[]
+  bookmarks   Bookmark[]
+  tags        BookTag[]
+  
+  @@map("books")
+}
+
+model Chapter {
+  id                   String   @id @default(cuid())
+  bookId               String
+  title                String
+  content              String
+  order                Int
+  wordCount            Int      @default(0)
+  estimatedReadingTime Int      @default(0)
+  partNumber           Int      @default(1)
+  slug                 String
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  
+  // Relations
+  book                 Book              @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  readingSessions      ReadingSession[]
+  bookmarks            Bookmark[]
+  
+  @@unique([bookId, slug])
+  @@map("chapters")
+}
+
+model Purchase {
+  id          String   @id @default(cuid())
+  userId      String
+  bookId      String
+  amount      Float
+  currency    String
+  stripeId    String?
+  status      String   @default("pending")
+  purchasedAt DateTime @default(now())
+  
+  // Relations
+  user        User     @relation(fields: [userId], references: [id])
+  book        Book     @relation(fields: [bookId], references: [id])
+  
+  @@unique([userId, bookId])
+  @@map("purchases")
+}
+
+model ReadingSession {
+  id          String   @id @default(cuid())
+  userId      String
+  bookId      String
+  chapterId   String
+  position    Int      @default(0)
+  percentage  Float    @default(0)
+  device      String?
+  lastReadAt  DateTime @updatedAt
+  createdAt   DateTime @default(now())
+  
+  // Relations
+  user        User     @relation(fields: [userId], references: [id])
+  book        Book     @relation(fields: [bookId], references: [id])
+  chapter     Chapter  @relation(fields: [chapterId], references: [id])
+  
+  @@unique([userId, bookId, device])
+  @@map("reading_sessions")
+}
+
+model Bookmark {
+  id          String   @id @default(cuid())
+  userId      String
+  bookId      String
+  chapterId   String
+  position    Int
+  note        String?
+  color       String?
+  createdAt   DateTime @default(now())
+  
+  // Relations
+  user        User     @relation(fields: [userId], references: [id])
+  book        Book     @relation(fields: [bookId], references: [id])
+  chapter     Chapter  @relation(fields: [chapterId], references: [id])
+  
+  @@map("bookmarks")
+}
+
+model BlogPost {
+  id          String   @id @default(cuid())
+  userId      String
+  title       String
+  slug        String   @unique
+  content     String
+  excerpt     String?
+  coverImage  String?
+  isPublished Boolean  @default(false)
+  publishedAt DateTime?
+  viewCount   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  author      User      @relation(fields: [userId], references: [id])
+  tags        BlogTag[]
+  
+  @@map("blog_posts")
+}
+
+model Tag {
+  id          String     @id @default(cuid())
+  name        String     @unique
+  slug        String     @unique
+  
+  // Relations
+  books       BookTag[]
+  blogPosts   BlogTag[]
+  
+  @@map("tags")
+}
+
+model BookTag {
+  bookId      String
+  tagId       String
+  
+  // Relations
+  book        Book       @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  tag         Tag        @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  
+  @@id([bookId, tagId])
+  @@map("book_tags")
+}
+
+model BlogTag {
+  blogPostId  String
+  tagId       String
+  
+  // Relations
+  blogPost    BlogPost   @relation(fields: [blogPostId], references: [id], onDelete: Cascade)
+  tag         Tag        @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  
+  @@id([blogPostId, tagId])
+  @@map("blog_tags")
+}

@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+
+# Build output
+.svelte-kit/
+build/
+dist/
+
+# Generated files
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# Environment files
+.env
+.env.*
+
+# IDE
+.vscode/
+.idea/
+
+# Database
+dev.db
+dev.db-journal
+prisma/dev.db
+prisma/dev.db-journal
+
+# Migrations
+prisma/migrations/
