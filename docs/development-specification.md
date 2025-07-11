@@ -1,16 +1,29 @@
-# SvelteKit電子書籍プラットフォーム開発指示書
+# Tech Shelf 開発指示書
 
 ## プロジェクト概要
 
-SvelteKitを使用して、ブログ機能と電子書籍閲覧・配信機能を持つWebプラットフォームを開発する。マルチアカウント対応、優れたローカル開発体験を重視。
+Tech Shelfは、技術ブログの執筆から電子書籍の出版までをシームレスに行えるプラットフォームです。SvelteKitを使用して、ブログ機能と電子書籍の作成・閲覧・販売機能を持つWebアプリケーションを開発します。
+
+### 主要機能
+
+- ブログ記事の投稿・管理（会員限定）
+- ブログ記事を集約した電子書籍作成
+- AIによる電子書籍の自動生成
+- Markdownエディタと階層構造管理
+- 電子書籍の販売・購入
 
 ## 技術スタック
 
 - **フロントエンド**: SvelteKit v2, Svelte 5, TypeScript 5.0+
 - **スタイリング**: Tailwind CSS v4 + Skeleton UI v3
+- **エディタ**: CodeMirror 6 / Monaco Editor
+- **Markdown処理**: marked / remark / MDsveX
+- **数式**: KaTeX / MathJax
+- **ダイアグラム**: Mermaid
 - **データベース**: Supabase (本番) + SQLite (ローカル開発)
 - **ORM**: Prisma (SQLite/PostgreSQL両対応)
 - **認証**: Supabase Auth (マルチプロバイダー対応)
+- **AI**: OpenAI API / Claude API
 - **検索**: MeiliSearch (ローカル・本番共通)
 - **決済**: Stripe (TypeScript SDK)
 - **ファイルストレージ**: Supabase Storage (本番) + ローカルファイル (開発)
@@ -40,6 +53,9 @@ SvelteKitを使用して、ブログ機能と電子書籍閲覧・配信機能�
 ### 未実装
 
 - ❌ 認証機能（Supabase Auth）
+- ❌ ブログ投稿機能（Markdownエディタ、階層構造管理）
+- ❌ 電子書籍作成機能（ブログ記事からの書籍化）
+- ❌ AI書籍生成機能（アウトライン・コンテンツ自動生成）
 - ❌ 購入・決済機能（Stripe）
 - ❌ 管理画面
 - ❌ 検索機能（MeiliSearch）
@@ -98,11 +114,19 @@ project-root/
 │   │   │   ├── blog/
 │   │   │   │   ├── +page.svelte
 │   │   │   │   ├── [slug]/
-│   │   │   │   └── +layout.svelte
+│   │   │   │   ├── create/
+│   │   │   │   │   ├── +page.svelte
+│   │   │   │   │   └── +page.server.ts
+│   │   │   │   └── edit/
+│   │   │   │       └── [id]/
 │   │   │   ├── books/
 │   │   │   │   ├── +page.svelte
 │   │   │   │   ├── [id]/
-│   │   │   │   └── +layout.svelte
+│   │   │   │   ├── create/
+│   │   │   │   │   ├── +page.svelte
+│   │   │   │   │   └── +page.server.ts
+│   │   │   │   └── edit/
+│   │   │   │       └── [id]/
 │   │   │   ├── reader/
 │   │   │   │   └── [bookId]/
 │   │   │   │       ├── +page.svelte
@@ -145,16 +169,22 @@ project-root/
 │   │   │   │   ├── BookList.svelte
 │   │   │   │   ├── BookDetail.svelte
 │   │   │   │   └── BookCard.svelte
-│   │   │   └── reader/
-│   │   │       ├── WebReader.svelte
-│   │   │       ├── TableOfContents.svelte
-│   │   │       ├── ReadingProgress.svelte
-│   │   │       ├── ReaderControls.svelte
-│   │   │       └── BookmarkPanel.svelte
+│   │   │   ├── reader/
+│   │   │   │   ├── WebReader.svelte
+│   │   │   │   ├── TableOfContents.svelte
+│   │   │   │   ├── ReadingProgress.svelte
+│   │   │   │   ├── ReaderControls.svelte
+│   │   │   │   └── BookmarkPanel.svelte
+│   │   │   └── editor/
+│   │   │       ├── MarkdownEditor.svelte
+│   │   │       ├── OutlinePane.svelte
+│   │   │       ├── PreviewPane.svelte
+│   │   │       └── EditorToolbar.svelte
 │   │   ├── stores/             # Svelte stores
 │   │   │   ├── auth.ts
 │   │   │   ├── books.ts
 │   │   │   ├── reading.ts
+│   │   │   ├── editor.ts
 │   │   │   └── ui.ts
 │   │   ├── server/             # サーバー側ロジック
 │   │   │   ├── auth.ts
@@ -162,16 +192,22 @@ project-root/
 │   │   │   ├── books.ts
 │   │   │   ├── chapters.ts
 │   │   │   ├── reading.ts
+│   │   │   ├── blog.ts
+│   │   │   ├── ai.ts
 │   │   │   └── payments.ts
 │   │   ├── utils/
 │   │   │   ├── helpers.ts
 │   │   │   ├── validation.ts
-│   │   │   └── constants.ts
+│   │   │   ├── constants.ts
+│   │   │   ├── markdown.ts
+│   │   │   └── outline.ts
 │   │   ├── types/
 │   │   │   ├── book.ts
 │   │   │   ├── user.ts
 │   │   │   ├── auth.ts
 │   │   │   ├── reading.ts
+│   │   │   ├── blog.ts
+│   │   │   ├── editor.ts
 │   │   │   └── api.ts
 │   │   └── config/
 │   │       ├── database.ts
@@ -200,7 +236,7 @@ project-root/
 
 ## 開発フェーズ
 
-### Phase 1: 基盤構築 (2週間)
+### Phase 1: 基盤構築 (2週間) ✅ 完了
 
 - SvelteKitプロジェクト作成
 - TypeScript + Tailwind CSS設定
@@ -208,43 +244,52 @@ project-root/
 - ローカル開発環境構築（SQLite）
 - 基本認証システム（Supabase Auth）
 
-### Phase 2: ブログ機能 (2週間)
+### Phase 2: 認証・会員機能 (2週間)
 
-- Markdownブログシステム
-- mdsvex設定（拡張Markdown）
-- 記事一覧・詳細ページ
-- カテゴリ・タグ機能
-- RSS/Atom配信
+- Supabase Auth統合
+- ログイン・サインアップページ
+- プロフィール管理
+- 権限管理システム
+- セッション管理
 
-### Phase 3: 電子書籍基本機能 (3週間)
+### Phase 3: ブログ投稿機能 (3週間)
 
-- 書籍データモデル実装
-- ファイルアップロード機能
-- 書籍一覧・詳細ページ
-- 章立て管理システム
-- MeiliSearch統合
+- Markdownエディタ実装
+  - CodeMirror 6統合
+  - リアルタイムプレビュー
+  - 階層構造表示（アウトラインペイン）
+- 記事投稿・編集機能
+- 画像アップロード（ドラッグ&ドロップ）
+- 下書き・予約投稿
+- シリーズ管理
+- タグ・カテゴリ管理
 
-### Phase 4: 電子書籍閲覧機能 (3週間)
+### Phase 4: 電子書籍作成機能 (4週間)
 
-- Web Reader実装（epub.js）
-- 読書進捗トラッキング
-- しおり・ハイライト機能
-- レスポンシブ設計
-- PWA対応
+- 書籍作成ウィザード
+- ブログ記事選択UI
+- AI章構成提案
+- 統合エディタ実装
+  - 階層構造管理
+  - 章の並び替え・分割・結合
+- プレビュー機能（PDF/ePub）
 
-### Phase 5: マルチアカウント機能 (2週間)
+### Phase 5: AI書籍生成機能 (3週間)
 
-- 複数認証プロバイダー対応
-- ユーザープロフィール管理
-- 購入履歴・ライブラリ
-- マルチデバイス同期
+- OpenAI/Claude API統合
+- アウトライン自動生成
+- コンテンツ生成機能
+- 生成管理UI
+- 編集・レビュー機能
 
-### Phase 6: 管理・決済機能 (2週間)
+### Phase 6: 決済・販売機能 (3週間)
 
-- 管理ダッシュボード
-- Stripe決済統合
-- 売上分析
-- コンテンツ管理
+- Stripe統合
+- 購入フロー実装
+- カート機能
+- 売上管理ダッシュボード
+- 振込処理
+- 領収書発行
 
 ### Phase 7: 最適化・デプロイ (1週間)
 
@@ -278,6 +323,7 @@ export interface Book {
   difficulty: DifficultyLevel;
   isPublished: boolean;
   authorId: string;
+  sourceType: 'manual' | 'blog_posts' | 'ai_generated';
 }
 
 export interface Chapter {
@@ -290,6 +336,55 @@ export interface Chapter {
   estimatedReadingTime: number;
   partNumber: number;
   slug: string;
+  sourcePostId?: string; // ブログ記事から作成された場合
+}
+
+// src/lib/types/blog.ts
+export interface BlogPost {
+  id: string;
+  slug: string;
+  title: string;
+  content: string; // Markdown
+  excerpt?: string;
+  coverImage?: string;
+  published: boolean;
+  publishedAt?: Date;
+  views: number;
+  likes: number;
+  estimatedReadingTime: number;
+  authorId: string;
+  author: User;
+  tags: string[];
+  seriesId?: string;
+  seriesOrder?: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface BlogSeries {
+  id: string;
+  title: string;
+  description?: string;
+  slug: string;
+  authorId: string;
+  posts: BlogPost[];
+}
+
+// src/lib/types/editor.ts
+export interface EditorState {
+  content: string;
+  outline: Outline[];
+  isDirty: boolean;
+  autoSaveEnabled: boolean;
+  lastSaved?: Date;
+}
+
+export interface Outline {
+  id: string;
+  level: number; // 1-6 (H1-H6)
+  text: string;
+  line: number;
+  children?: Outline[];
 }
 
 // src/lib/types/user.ts
@@ -298,6 +393,7 @@ export interface User {
   email: string;
   name: string;
   avatar?: string;
+  role: 'reader' | 'author' | 'admin';
   providers: AuthProvider[];
   purchasedBooks: string[];
   createdAt: Date;
@@ -340,6 +436,7 @@ model User {
   email           String            @unique
   name            String
   avatar          String?
+  role            String            @default("reader") // "reader" | "author" | "admin"
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
 
@@ -348,6 +445,8 @@ model User {
   readingSessions ReadingSession[]
   bookmarks       Bookmark[]
   authoredBooks   Book[]           @relation("BookAuthor")
+  blogPosts       BlogPost[]
+  blogSeries      BlogSeries[]
 
   @@map("users")
 }
@@ -361,21 +460,139 @@ model Book {
   price       Float
   currency    String    @default("JPY")
   language    String    @default("ja")
+  category    String    @default("other")
+  difficulty  String    @default("intermediate")
   isPublished Boolean   @default(false)
   publishedAt DateTime?
+
+  // Book creation source
+  sourceType  String    @default("manual") // "manual" | "blog_posts" | "ai_generated"
+
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
   // Relations
   authorId    String
-  authorUser  User        @relation("BookAuthor", fields: [authorId], references: [id])
+  authorUser  User              @relation("BookAuthor", fields: [authorId], references: [id])
   chapters    Chapter[]
   purchases   Purchase[]
   sessions    ReadingSession[]
   bookmarks   Bookmark[]
+  tags        BookTag[]
+  bookProject BookCreationProject?
 
   @@map("books")
 }
+
+model Chapter {
+  id            String    @id @default(cuid())
+  bookId        String
+  title         String
+  slug          String
+  content       String    // Markdown/HTML content
+  order         Int
+  wordCount     Int       @default(0)
+  estimatedReadingTime Int @default(0)
+  partNumber    Int       @default(1)
+
+  // Source tracking
+  sourcePostId  String?   // If created from blog post
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  book          Book      @relation(fields: [bookId], references: [id])
+  sourcePost    BlogPost? @relation("ChapterSource", fields: [sourcePostId], references: [id])
+
+  @@unique([bookId, slug])
+  @@map("chapters")
+}
+
+model BlogPost {
+  id            String         @id @default(cuid())
+  slug          String         @unique
+  title         String
+  content       String         // Markdown content
+  excerpt       String?
+  coverImage    String?
+  published     Boolean        @default(false)
+  publishedAt   DateTime?
+  views         Int            @default(0)
+  likes         Int            @default(0)
+  estimatedReadingTime Int     @default(0)
+
+  // Series
+  seriesId      String?
+  series        BlogSeries?    @relation(fields: [seriesId], references: [id])
+  seriesOrder   Int?
+
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  // Relations
+  authorId      String
+  author        User           @relation(fields: [authorId], references: [id])
+  tags          BlogPostTag[]
+  bookChapters  Chapter[]      @relation("ChapterSource")
+  bookProjects  BookProjectPost[]
+
+  @@map("blog_posts")
+}
+
+model BlogSeries {
+  id          String      @id @default(cuid())
+  title       String
+  description String?
+  slug        String      @unique
+
+  // Relations
+  authorId    String
+  author      User        @relation(fields: [authorId], references: [id])
+  posts       BlogPost[]
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@map("blog_series")
+}
+
+model BookCreationProject {
+  id          String    @id @default(cuid())
+  name        String
+  status      String    @default("draft") // "draft" | "generating" | "editing" | "completed"
+
+  // AI generation settings
+  aiModel     String?   // "gpt-4" | "claude-3"
+  prompt      String?
+  outline     Json?     // AI generated outline
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  bookId      String    @unique
+  book        Book      @relation(fields: [bookId], references: [id])
+  selectedPosts BookProjectPost[]
+
+  @@map("book_creation_projects")
+}
+
+model BookProjectPost {
+  id          String    @id @default(cuid())
+  order       Int       // Order in the book
+
+  // Relations
+  projectId   String
+  project     BookCreationProject @relation(fields: [projectId], references: [id])
+  postId      String
+  post        BlogPost  @relation(fields: [postId], references: [id])
+
+  @@unique([projectId, postId])
+  @@map("book_project_posts")
+}
+
+// ... その他のモデル（Purchase, ReadingSession, Bookmark, Tag関連）は既存のまま
 ```
 
 ### 3. Svelte Stores
@@ -414,99 +631,92 @@ const createAuthStore = () => {
 
 export const auth = createAuthStore();
 
-// src/lib/stores/reading.ts
+// src/lib/stores/editor.ts
 import { writable } from 'svelte/store';
-import type { ReadingSession } from '$lib/types/user';
+import type { EditorState, Outline } from '$lib/types/editor';
 
-const createReadingStore = () => {
-  const { subscribe, set, update } = writable<{
-    currentSession: ReadingSession | null;
-    sessions: ReadingSession[];
-  }>({
-    currentSession: null,
-    sessions: [],
+const createEditorStore = () => {
+  const { subscribe, set, update } = writable<EditorState>({
+    content: '',
+    outline: [],
+    isDirty: false,
+    autoSaveEnabled: true,
   });
 
   return {
     subscribe,
-    updateProgress: async (bookId: string, chapterId: string, position: number) => {
-      // 読書進捗更新
+    updateContent: (content: string) => {
+      update((state) => ({ ...state, content, isDirty: true }));
     },
-    syncAcrossDevices: async () => {
-      // デバイス間同期
+    updateOutline: (outline: Outline[]) => {
+      update((state) => ({ ...state, outline }));
+    },
+    save: async () => {
+      // 保存処理
     },
   };
 };
 
-export const reading = createReadingStore();
+export const editor = createEditorStore();
 ```
 
-### 4. Web Reader コンポーネント
+### 4. Markdownエディタコンポーネント
 
 ```svelte
-<!-- src/lib/components/reader/WebReader.svelte -->
+<!-- src/lib/components/editor/MarkdownEditor.svelte -->
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { reading } from '$lib/stores/reading';
-  import type { Book, Chapter } from '$lib/types/book';
+  import { editor } from '$lib/stores/editor';
+  import type { EditorView } from '@codemirror/view';
+  import { markdown } from '@codemirror/lang-markdown';
 
-  export let book: Book;
-  export let currentChapter: Chapter;
+  export let value: string = '';
+  export let placeholder: string = 'Start writing...';
 
-  let readerContainer: HTMLDivElement;
-  let fontSize = 16;
-  let theme: 'light' | 'dark' = 'light';
-  let readingProgress = 0;
+  let editorElement: HTMLDivElement;
+  let view: EditorView;
 
   onMount(() => {
-    // epub.js initialization
-    initializeReader();
+    // CodeMirror 6 初期化
+    initializeEditor();
+
+    return () => {
+      view?.destroy();
+    };
   });
 
-  const initializeReader = () => {
-    // Reader setup
-  };
+  const initializeEditor = async () => {
+    const { EditorView, basicSetup } = await import('@codemirror/basic-setup');
+    const { EditorState } = await import('@codemirror/state');
 
-  const updateReadingPosition = (position: number) => {
-    reading.updateProgress(book.id, currentChapter.id, position);
+    view = new EditorView({
+      state: EditorState.create({
+        doc: value,
+        extensions: [
+          basicSetup,
+          markdown(),
+          // カスタム拡張
+        ],
+      }),
+      parent: editorElement,
+    });
   };
 </script>
 
-<div class="reader-wrapper" class:dark={theme === 'dark'}>
-  <div class="reader-controls">
-    <button on:click={() => fontSize--}>A-</button>
-    <span>{fontSize}px</span>
-    <button on:click={() => fontSize++}>A+</button>
-    <button on:click={() => (theme = theme === 'light' ? 'dark' : 'light')}> 🌓 </button>
-  </div>
-
-  <div bind:this={readerContainer} class="reader-content" style="font-size: {fontSize}px">
-    {@html currentChapter.content}
-  </div>
-
-  <div class="progress-bar">
-    <div class="progress" style="width: {readingProgress}%"></div>
-  </div>
+<div class="editor-container">
+  <div bind:this={editorElement} class="editor"></div>
 </div>
 
 <style>
-  .reader-wrapper {
-    height: 100vh;
+  .editor-container {
+    height: 100%;
     display: flex;
     flex-direction: column;
   }
 
-  .reader-content {
+  .editor {
     flex: 1;
-    padding: 2rem;
-    line-height: 1.8;
-    max-width: 800px;
-    margin: 0 auto;
-  }
-
-  .dark .reader-content {
-    background: #1a1a1a;
-    color: #e0e0e0;
+    overflow: auto;
   }
 </style>
 ```
@@ -559,6 +769,10 @@ STRIPE_WEBHOOK_SECRET=whsec_...
 MEILISEARCH_HOST=http://localhost:7700
 MEILISEARCH_API_KEY=your_meilisearch_key
 
+# AI APIs
+OPENAI_API_KEY=sk-...
+ANTHROPIC_API_KEY=sk-ant-...
+
 # Authentication
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
@@ -576,11 +790,13 @@ NODE_ENV=development
    - Supabase Row Level Security (RLS)
    - APIエンドポイントの保護
    - セッション管理
+   - 役割ベースアクセス制御（RBAC）
 
 2. **データ保護**
    - 個人情報の暗号化
    - HTTPSの強制
    - CSRFトークン
+   - XSS対策（コンテンツサニタイズ）
 
 3. **決済セキュリティ**
    - Stripe PCI準拠
@@ -588,6 +804,6 @@ NODE_ENV=development
    - 決済情報の非保存
 
 4. **コンテンツ保護**
-   - 電子書籍のDRM考慮
-   - アクセス制御
+   - 電子書籍のアクセス制御
    - ダウンロード制限
+   - AI生成コンテンツの著作権管理
