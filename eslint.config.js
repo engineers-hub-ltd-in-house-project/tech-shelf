@@ -48,6 +48,7 @@ export default [
     rules: {
       ...svelte.configs.recommended.rules,
       'svelte/no-at-html-tags': 'off',
+      'no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
     },
   },
   {
@@ -57,6 +58,7 @@ export default [
       'build/',
       'dist/',
       'prisma/migrations/',
+      'prisma/seed.ts',
       'coverage/',
       '*.config.js',
       '*.config.ts',
