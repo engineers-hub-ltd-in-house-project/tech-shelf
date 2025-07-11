@@ -119,13 +119,17 @@
         </div>
 
         <div class="flex gap-2">
-          <button class="btn variant-filled-primary">
-            {#if book.price === 0}
-              無料で読む
-            {:else}
-              購入する
-            {/if}
-          </button>
+          {#if book.chapters.length > 0}
+            <a href="/reader/{book.id}" class="btn variant-filled-primary">
+              {#if book.price === 0}
+                無料で読む
+              {:else}
+                読み始める
+              {/if}
+            </a>
+          {:else}
+            <button class="btn variant-filled-primary" disabled> 準備中 </button>
+          {/if}
           <button class="btn variant-soft"> サンプルを読む </button>
         </div>
       </div>

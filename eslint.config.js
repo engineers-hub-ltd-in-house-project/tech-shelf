@@ -21,6 +21,7 @@ export default [
         global: 'readonly',
         console: 'readonly',
         URL: 'readonly',
+        HTMLDivElement: 'readonly',
       },
     },
     plugins: {
@@ -50,6 +51,7 @@ export default [
         global: 'readonly',
         console: 'readonly',
         URL: 'readonly',
+        HTMLDivElement: 'readonly',
       },
     },
     plugins: {
