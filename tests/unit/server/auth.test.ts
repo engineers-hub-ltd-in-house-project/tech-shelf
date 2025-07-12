@@ -27,7 +27,7 @@ vi.mock('@sveltejs/kit', () => mockSvelteKitImports());
 describe('Authentication Functions', () => {
   let mockPrisma: ReturnType<typeof createMockPrismaClient>;
   let mockCookies: ReturnType<typeof createMockCookies>;
-  const { redirect: _redirect, error: _error, fail } = mockSvelteKitImports();
+  const { redirect: _redirect, error: _error, fail: _fail } = mockSvelteKitImports();
 
   beforeEach(() => {
     vi.clearAllMocks();

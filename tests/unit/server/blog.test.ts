@@ -26,7 +26,7 @@ vi.mock('@sveltejs/kit', () => mockSvelteKitImports());
 describe('Blog Edit Server Functions', () => {
   let mockPrisma: ReturnType<typeof createMockPrismaClient>;
   let mockCookies: ReturnType<typeof createMockCookies>;
-  const { redirect: _redirect, error: _error, fail } = mockSvelteKitImports();
+  const { redirect: _redirect, error: _error, fail: _fail } = mockSvelteKitImports();
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -204,7 +204,7 @@ describe('Blog Edit Server Functions', () => {
 describe('Blog Create Server Functions', () => {
   let mockPrisma: ReturnType<typeof createMockPrismaClient>;
   let mockCookies: ReturnType<typeof createMockCookies>;
-  const { redirect: _redirect, error: _error, fail } = mockSvelteKitImports();
+  const { redirect: _redirect, error: _error, fail: _fail } = mockSvelteKitImports();
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -278,7 +278,7 @@ describe('Blog Create Server Functions', () => {
 
       try {
         await createActions.default({ request, cookies: mockCookies } as any);
-      } catch (e) {
+      } catch {
         // Expected redirect
       }
 
