@@ -850,3 +850,204 @@ NODE_ENV=development
    - 電子書籍のアクセス制御
    - ダウンロード制限
    - AI生成コンテンツの著作権管理
+
+## テスト実装方針
+
+### テストフレームワーク・ツール
+
+- **単体テスト**: Vitest + @testing-library/svelte
+- **統合テスト**: Vitest + MSW (Mock Service Worker)
+- **E2Eテスト**: Playwright
+- **コードカバレッジ**: c8 (Vitest内蔵)
+- **テストデータ**: Prisma Client モック / Factory関数
+
+### テストファイル構成
+
+```
+tests/
+├── unit/                      # 単体テスト
+│   ├── components/           # コンポーネントテスト
+│   │   ├── blog/
+│   │   │   ├── BlogCard.test.ts
+│   │   │   └── BlogPost.test.ts
+│   │   ├── editor/
+│   │   │   ├── MarkdownEditor.test.ts
+│   │   │   └── OutlinePane.test.ts
+│   │   └── reader/
+│   │       └── WebReader.test.ts
+│   ├── server/               # サーバー側ロジックテスト
+│   │   ├── auth.test.ts
+│   │   ├── blog.test.ts
+│   │   └── database.test.ts
+│   └── utils/                # ユーティリティ関数テスト
+│       ├── markdown.test.ts
+│       └── validation.test.ts
+├── integration/              # 統合テスト
+│   ├── api/                  # APIエンドポイントテスト
+│   │   ├── blog.test.ts
+│   │   └── auth.test.ts
+│   └── flows/                # ユーザーフローテスト
+│       ├── blog-creation.test.ts
+│       └── authentication.test.ts
+├── e2e/                      # E2Eテスト
+│   ├── auth.spec.ts
+│   ├── blog.spec.ts
+│   └── reader.spec.ts
+├── fixtures/                 # テストデータ
+│   ├── users.ts
+│   ├── posts.ts
+│   └── books.ts
+└── helpers/                  # テストヘルパー
+    ├── setup.ts
+    ├── factories.ts
+    └── mocks.ts
+```
+
+### テスト戦略
+
+#### 1. 単体テスト
+
+**重点テスト対象：**
+
+- 認証・認可ロジック（src/lib/server/auth.ts）
+- ブログ投稿・編集機能（src/routes/(app)/blog/）
+- Markdownパーサー・アウトライン生成
+- バリデーション関数
+- Prismaクエリ
+
+**テスト例：**
+
+```typescript
+// tests/unit/server/blog.test.ts
+describe('Blog Server Functions', () => {
+  it('should create a new blog post with tags', async () => {
+    // テスト実装
+  });
+
+  it('should validate slug uniqueness', async () => {
+    // テスト実装
+  });
+
+  it('should handle authorization correctly', async () => {
+    // テスト実装
+  });
+});
+```
+
+#### 2. 統合テスト
+
+**テスト対象：**
+
+- APIエンドポイントの動作確認
+- フォーム送信とデータ処理
+- 認証フローの一連の動作
+- 外部サービスとの連携（モック使用）
+
+**テスト例：**
+
+```typescript
+// tests/integration/api/blog.test.ts
+describe('Blog API Integration', () => {
+  it('POST /blog/create should create post and redirect', async () => {
+    // テスト実装
+  });
+
+  it('should handle validation errors properly', async () => {
+    // テスト実装
+  });
+});
+```
+
+#### 3. E2Eテスト
+
+**シナリオ：**
+
+1. ユーザー登録 → ログイン → ブログ投稿
+2. ブログ記事作成 → 編集 → 公開
+3. 記事閲覧 → 電子書籍作成（将来）
+
+**テスト例：**
+
+```typescript
+// tests/e2e/blog.spec.ts
+test('complete blog creation flow', async ({ page }) => {
+  // ログイン
+  await page.goto('/login');
+  await page.fill('[name="email"]', 'test@example.com');
+  await page.fill('[name="password"]', 'password');
+  await page.click('button[type="submit"]');
+
+  // ブログ作成
+  await page.goto('/blog/create');
+  // ... テスト続行
+});
+```
+
+### テストデータ管理
+
+```typescript
+// tests/helpers/factories.ts
+export const createUser = (overrides = {}) => ({
+  id: 'test-user-id',
+  email: 'test@example.com',
+  name: 'Test User',
+  role: 'author',
+  ...overrides,
+});
+
+export const createBlogPost = (overrides = {}) => ({
+  id: 'test-post-id',
+  title: 'Test Post',
+  slug: 'test-post',
+  content: '# Test Content',
+  userId: 'test-user-id',
+  isPublished: false,
+  ...overrides,
+});
+```
+
+### CI/CD統合
+
+```yaml
+# .github/workflows/test.yml
+name: Test
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+      - run: npm ci
+      - run: npm run test:unit
+      - run: npm run test:integration
+      - run: npx playwright install
+      - run: npm run test:e2e
+      - uses: codecov/codecov-action@v3
+```
+
+### 実装優先順位
+
+1. **Phase 1**: 既存機能の単体テスト（認証、ブログ投稿・編集）
+2. **Phase 2**: 統合テスト（APIエンドポイント、フォーム処理）
+3. **Phase 3**: E2Eテスト（主要ユーザーフロー）
+4. **Phase 4**: パフォーマンステスト・セキュリティテスト
+
+### テストコマンド
+
+```json
+// package.json に追加
+{
+  "scripts": {
+    "test": "vitest",
+    "test:unit": "vitest run --dir tests/unit",
+    "test:integration": "vitest run --dir tests/integration",
+    "test:e2e": "playwright test",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest watch"
+  }
+}
+```
