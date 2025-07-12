@@ -69,6 +69,7 @@
               href="/blog/edit/{post.id}"
               class="btn btn-sm btn-circle btn-ghost bg-base-100"
               title="編集"
+              aria-label="記事を編集"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -133,6 +134,6 @@
 
 <style>
   .tabs {
-    @apply w-fit;
+    width: fit-content;
   }
 </style>

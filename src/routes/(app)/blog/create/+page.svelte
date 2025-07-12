@@ -76,7 +76,13 @@
         <h1>新規記事作成</h1>
       </div>
       <div class="header-right">
-        <button type="button" class="icon-button" on:click={toggleOutline} title="アウトライン表示">
+        <button
+          type="button"
+          class="icon-button"
+          on:click={toggleOutline}
+          title="アウトライン表示"
+          aria-label="アウトライン表示"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="20"
@@ -94,7 +100,13 @@
             <line x1="21" y1="18" x2="3" y2="18"></line>
           </svg>
         </button>
-        <button type="button" class="icon-button" on:click={togglePreview} title="プレビュー表示">
+        <button
+          type="button"
+          class="icon-button"
+          on:click={togglePreview}
+          title="プレビュー表示"
+          aria-label="プレビュー表示"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="20"

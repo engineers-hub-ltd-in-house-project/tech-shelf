@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noUnusedParameters": false,
+    "noUnusedLocals": false,
+    "noPropertyAccessFromIndexSignature": false,
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*", "svelte.config.js"],
+  "exclude": ["**/*.test.ts", "**/*.test.tsx", "**/*.spec.ts", "tests/**", "src/**/__tests__/**"]
+}

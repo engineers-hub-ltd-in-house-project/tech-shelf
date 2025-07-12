@@ -23,12 +23,12 @@ const config = defineConfig({
         });
 
         const light = highlighter.codeToHtml(code, {
-          lang,
+          lang: lang || 'text',
           theme: 'github-light',
         });
 
         const dark = highlighter.codeToHtml(code, {
-          lang,
+          lang: lang || 'text',
           theme: 'github-dark',
         });
 

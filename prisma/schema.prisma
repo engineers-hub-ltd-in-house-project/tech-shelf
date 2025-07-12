@@ -25,6 +25,7 @@ model User {
   bookmarks       Bookmark[]
   authoredBooks   Book[]           @relation("BookAuthor")
   blogPosts       BlogPost[]
+  bookProjects    BookCreationProject[]
   
   @@map("users")
 }
@@ -53,6 +54,7 @@ model Book {
   sessions    ReadingSession[]
   bookmarks   Bookmark[]
   tags        BookTag[]
+  creationProject BookCreationProject?
   
   @@map("books")
 }
@@ -152,6 +154,7 @@ model BlogPost {
   // Relations
   author      User      @relation(fields: [userId], references: [id])
   tags        BlogTag[]
+  bookProjects BookProjectPost[]
   
   @@map("blog_posts")
 }
@@ -190,4 +193,59 @@ model BlogTag {
   
   @@id([blogPostId, tagId])
   @@map("blog_tags")
+}
+
+model BookCreationProject {
+  id          String    @id @default(cuid())
+  userId      String
+  title       String
+  description String?
+  status      String    @default("draft") // draft, in_progress, review, published
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relations
+  author      User                  @relation(fields: [userId], references: [id])
+  posts       BookProjectPost[]
+  chapters    BookProjectChapter[]
+  book        Book?                 @relation(fields: [bookId], references: [id])
+  bookId      String?               @unique
+  
+  @@map("book_creation_projects")
+}
+
+model BookProjectPost {
+  id          String              @id @default(cuid())
+  projectId   String
+  blogPostId  String
+  order       Int
+  includeInBook Boolean           @default(true)
+  chapterId   String?
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  
+  // Relations
+  project     BookCreationProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  blogPost    BlogPost            @relation(fields: [blogPostId], references: [id])
+  chapter     BookProjectChapter? @relation(fields: [chapterId], references: [id])
+  
+  @@unique([projectId, blogPostId])
+  @@map("book_project_posts")
+}
+
+model BookProjectChapter {
+  id          String              @id @default(cuid())
+  projectId   String
+  title       String
+  order       Int
+  content     String?             // 章の説明やまとめ
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  
+  // Relations
+  project     BookCreationProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  posts       BookProjectPost[]
+  
+  @@unique([projectId, order])
+  @@map("book_project_chapters")
 }

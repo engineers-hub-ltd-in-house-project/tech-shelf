@@ -13,9 +13,7 @@
   };
 </script>
 
-<article
-  class="card bg-surface-100 dark:bg-surface-800 shadow-xl hover:shadow-2xl transition-shadow"
->
+<article class="bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-shadow rounded-lg">
   {#if post.coverImage}
     <header>
       <img src={post.coverImage} alt={post.title} class="w-full h-48 object-cover" />
@@ -23,27 +21,34 @@
   {/if}
 
   <div class="p-4 space-y-4">
-    <h2 class="h4 font-bold">
-      <a {href} class="hover:text-primary-500 transition-colors">
+    <h2 class="text-lg font-bold">
+      <a {href} class="hover:text-gray-600 transition-colors">
         {post.title}
       </a>
     </h2>
 
     {#if post.excerpt}
-      <p class="text-surface-600 dark:text-surface-400">{post.excerpt}</p>
+      <p class="text-gray-600 dark:text-gray-400">{post.excerpt}</p>
     {/if}
 
     <div class="flex flex-wrap gap-2">
       {#each post.tags as { tag }}
-        <span class="badge variant-soft-primary">{tag.name}</span>
+        <span
+          class="inline-flex items-center px-2 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded dark:bg-gray-800 dark:text-gray-200"
+          >{tag.name}</span
+        >
       {/each}
     </div>
 
     <div class="flex justify-between items-center">
-      <span class="text-sm text-surface-500 dark:text-surface-500">
+      <span class="text-sm text-gray-500 dark:text-gray-500">
         {formatDate(post.publishedAt || post.createdAt)}
       </span>
-      <a {href} class="btn btn-sm variant-filled-primary">続きを読む</a>
+      <a
+        {href}
+        class="px-3 py-1.5 text-sm font-medium text-white bg-gray-600 rounded-lg hover:bg-gray-700 focus:ring-4 focus:ring-blue-300 dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-blue-800"
+        >続きを読む</a
+      >
     </div>
   </div>
 </article>

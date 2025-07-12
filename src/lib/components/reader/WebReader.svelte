@@ -6,7 +6,7 @@
   export let book: Book;
   export let chapter: Chapter;
   export let fontSize: number = 16;
-  export let theme: 'light' | 'dark' = 'light';
+  export const theme: 'light' | 'dark' = 'light';
 
   let contentElement: HTMLDivElement;
   let scrollPosition = 0;

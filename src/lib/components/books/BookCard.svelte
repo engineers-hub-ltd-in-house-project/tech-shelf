@@ -7,9 +7,11 @@
   const placeholderImage = 'https://via.placeholder.com/300x450?text=No+Cover';
 </script>
 
-<article class="card card-hover overflow-hidden h-full">
+<article
+  class="bg-white shadow rounded-lg hover:shadow-lg transition-shadow overflow-hidden h-full dark:bg-gray-800"
+>
   <a href="/books/{book.id}" class="block">
-    <header class="aspect-[2/3] relative overflow-hidden bg-surface-200-700-token">
+    <header class="aspect-[2/3] relative overflow-hidden bg-gray-200 dark:bg-gray-700">
       <img
         src={book.coverImage || placeholderImage}
         alt="{book.title} cover"
@@ -17,12 +19,16 @@
         loading="lazy"
       />
       {#if book.price === 0}
-        <span class="badge variant-filled-primary absolute top-2 right-2"> 無料 </span>
+        <span
+          class="inline-flex items-center px-2 py-1 text-xs font-medium text-white bg-gray-600 rounded absolute top-2 right-2"
+        >
+          無料
+        </span>
       {/if}
     </header>
 
-    <div class="card-body p-4 space-y-2">
-      <h3 class="h4 font-bold line-clamp-2">
+    <div class="p-4 space-y-2">
+      <h3 class="text-lg font-bold line-clamp-2">
         {book.title}
       </h3>
 
@@ -51,7 +57,9 @@
       {#if book.tags.length > 0}
         <div class="flex flex-wrap gap-1 mt-2">
           {#each book.tags.slice(0, 3) as tag}
-            <span class="badge variant-soft-surface text-xs">
+            <span
+              class="inline-flex items-center px-2 py-1 text-xs font-medium text-gray-600 bg-gray-100 rounded dark:bg-gray-700 dark:text-gray-300"
+            >
               {tag}
             </span>
           {/each}

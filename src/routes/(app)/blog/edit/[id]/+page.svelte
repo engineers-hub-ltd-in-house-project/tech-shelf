@@ -233,8 +233,15 @@
 <style>
   .editor-container {
     min-height: 100vh;
-    background-color: var(--color-bg-secondary);
+    background-color: #f8fafc;
     transition: background-color 0.3s ease;
+    --color-bg-primary: #ffffff;
+    --color-bg-secondary: #f8fafc;
+    --color-text-primary: #1f2937;
+    --color-text-secondary: #6b7280;
+    --color-border: #d1d5db;
+    --color-primary: #4b5563;
+    --color-primary-hover: #374151;
   }
 
   .editor-container.dark-mode {

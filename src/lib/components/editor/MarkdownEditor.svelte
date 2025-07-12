@@ -7,7 +7,7 @@
   import { createEventDispatcher } from 'svelte';
 
   export let value: string = '';
-  export let placeholder: string = 'Markdownで記事を書き始めましょう...';
+  export const placeholder: string = 'Markdownで記事を書き始めましょう...';
   export let darkMode: boolean = false;
 
   let editorElement: HTMLDivElement;

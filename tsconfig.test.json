@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noPropertyAccessFromIndexSignature": false
+  },
+  "include": [
+    "tests/**/*.ts",
+    "tests/**/*.spec.ts",
+    "tests/**/*.test.ts",
+    "src/**/__tests__/**/*.ts"
+  ]
+}

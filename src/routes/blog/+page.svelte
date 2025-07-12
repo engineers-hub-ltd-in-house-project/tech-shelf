@@ -33,8 +33,10 @@
 
 <main class="container mx-auto px-4 py-8">
   <header class="mb-8">
-    <h1 class="text-4xl font-bold text-base-content mb-4">ブログ</h1>
-    <p class="text-lg text-base-content/70">プログラミングと技術に関する記事を発信しています。</p>
+    <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">ブログ</h1>
+    <p class="text-lg text-gray-600 dark:text-gray-400">
+      プログラミングと技術に関する記事を発信しています。
+    </p>
   </header>
 
   <!-- タグフィルター -->
@@ -42,22 +44,25 @@
     <h2 class="text-xl font-semibold mb-4">タグで絞り込み</h2>
     <div class="flex flex-wrap gap-2">
       <button
-        class="btn btn-sm"
-        class:btn-primary={!currentTag}
-        class:btn-outline={currentTag}
+        class="px-3 py-1.5 text-sm font-medium rounded-lg border {!currentTag
+          ? 'text-white bg-gray-600 border-gray-600 hover:bg-gray-700'
+          : 'text-gray-600 bg-transparent border-gray-600 hover:bg-gray-50'}"
         on:click={() => handleTagClick('')}
       >
         すべて
       </button>
       {#each tags as tag}
         <button
-          class="btn btn-sm"
-          class:btn-primary={currentTag === tag.slug}
-          class:btn-outline={currentTag !== tag.slug}
+          class="px-3 py-1.5 text-sm font-medium rounded-lg border {currentTag === tag.slug
+            ? 'text-white bg-gray-600 border-gray-600 hover:bg-gray-700'
+            : 'text-gray-600 bg-transparent border-gray-600 hover:bg-gray-50'}"
           on:click={() => handleTagClick(tag.slug)}
         >
           {tag.name}
-          <span class="badge badge-sm ml-1">{tag._count.blogPosts}</span>
+          <span
+            class="inline-flex items-center px-1.5 py-0.5 text-xs font-medium bg-gray-100 text-gray-600 rounded ml-1 dark:bg-gray-700 dark:text-gray-300"
+            >{tag._count.blogPosts}</span
+          >
         </button>
       {/each}
     </div>
@@ -71,10 +76,10 @@
   <!-- ページネーション -->
   {#if pagination.totalPages > 1}
     <section class="flex justify-center">
-      <div class="join">
+      <div class="flex">
         <button
-          class="join-item btn"
-          class:btn-disabled={!pagination.hasPrev}
+          class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+          disabled={!pagination.hasPrev}
           on:click={() => handlePageChange(pagination.page - 1)}
         >
           «
@@ -83,8 +88,9 @@
         {#each Array(pagination.totalPages) as _, i}
           {@const pageNum = i + 1}
           <button
-            class="join-item btn"
-            class:btn-active={pageNum === pagination.page}
+            class="px-3 py-2 text-sm font-medium border {pageNum === pagination.page
+              ? 'z-10 bg-gray-50 border-gray-500 text-gray-600 dark:bg-gray-700 dark:border-gray-600 dark:text-white'
+              : 'text-gray-500 bg-white border-gray-300 hover:bg-gray-50 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white'}"
             on:click={() => handlePageChange(pageNum)}
           >
             {pageNum}
@@ -92,8 +98,8 @@
         {/each}
 
         <button
-          class="join-item btn"
-          class:btn-disabled={!pagination.hasNext}
+          class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+          disabled={!pagination.hasNext}
           on:click={() => handlePageChange(pagination.page + 1)}
         >
           »

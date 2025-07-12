@@ -4,6 +4,9 @@ const prisma = new PrismaClient();
 
 async function main() {
   // Clear existing data
+  await prisma.bookProjectPost.deleteMany();
+  await prisma.bookProjectChapter.deleteMany();
+  await prisma.bookCreationProject.deleteMany();
   await prisma.blogTag.deleteMany();
   await prisma.bookTag.deleteMany();
   await prisma.bookmark.deleteMany();
@@ -422,6 +425,62 @@ async function main() {
       },
     }),
   ]);
+
+  // Create book creation projects
+  const bookProject1 = await prisma.bookCreationProject.create({
+    data: {
+      userId: user.id,
+      title: 'Rust Web開発実践ガイド',
+      description: 'RustでWebアプリケーションを作るための実践的なガイドブック',
+      status: 'draft',
+      posts: {
+        create: [
+          {
+            blogPostId: blogPosts[0].id,
+            order: 0,
+            includeInBook: true,
+          },
+          {
+            blogPostId: blogPosts[1].id,
+            order: 1,
+            includeInBook: true,
+          },
+        ],
+      },
+      chapters: {
+        create: [
+          {
+            title: '第1章 Rustの基礎',
+            order: 0,
+            content: 'Rustの基本的な概念について説明します',
+          },
+          {
+            title: '第2章 Webフレームワーク',
+            order: 1,
+            content: 'Actix-webを使ったWeb開発の基礎',
+          },
+        ],
+      },
+    },
+  });
+
+  const bookProject2 = await prisma.bookCreationProject.create({
+    data: {
+      userId: user.id,
+      title: 'ドメイン駆動設計実践',
+      description: 'DDDの概念をRustで実装する方法を解説',
+      status: 'in_progress',
+      posts: {
+        create: [
+          {
+            blogPostId: blogPosts[2].id,
+            order: 0,
+            includeInBook: true,
+          },
+        ],
+      },
+    },
+  });
 
   console.log('Seed data created successfully!');
 }

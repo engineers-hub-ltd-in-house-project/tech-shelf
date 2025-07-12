@@ -97,33 +97,15 @@ export function sanitizeHtml(html: string): string {
   if (!html) return '';
 
   // 簡易的なサニタイズ（本番環境では DOMPurify などのライブラリを使用推奨）
-  const _allowedTags = [
-    'p',
-    'br',
-    'strong',
-    'em',
-    'u',
-    'a',
-    'ul',
-    'ol',
-    'li',
-    'blockquote',
-    'code',
-    'pre',
-    'h1',
-    'h2',
-    'h3',
-    'h4',
-    'h5',
-    'h6',
-  ];
-  const _allowedAttributes = ['href', 'title', 'target', 'rel'];
+  // 将来のHTML sanitization実装で使用予定のタグとアトリビュート:
+  // ['p', 'br', 'strong', 'em', 'u', 'a', 'ul', 'ol', 'li', 'blockquote', 'code', 'pre', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6']
+  // ['href', 'title', 'target', 'rel']
 
   // スクリプトタグを除去
   let sanitized = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
 
   // イベントハンドラ属性を除去
-  sanitized = sanitized.replace(/\son\w+\s*=\s*["'][^"']*["']/gi, ' ');
+  sanitized = sanitized.replace(/\s+on\w+\s*=\s*["'][^"']*["']/gi, '');
 
   // 危険な属性を除去
   sanitized = sanitized.replace(/javascript:/gi, '');

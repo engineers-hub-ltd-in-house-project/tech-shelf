@@ -8,7 +8,7 @@ export interface Outline {
   children?: Outline[];
 }
 
-export function parseMarkdown(markdown: string): string {
+export async function parseMarkdown(markdown: string): Promise<string> {
   if (!markdown) return '';
 
   // Configure marked options
@@ -17,7 +17,8 @@ export function parseMarkdown(markdown: string): string {
     breaks: true,
   });
 
-  return marked(markdown);
+  const result = marked(markdown);
+  return typeof result === 'string' ? result : await result;
 }
 
 export function extractOutline(markdown: string): Outline[] {
@@ -33,7 +34,7 @@ export function extractOutline(markdown: string): Outline[] {
     const line = lines[i];
 
     // Check for code block
-    if (line.trim().startsWith('```')) {
+    if (line?.trim().startsWith('```')) {
       inCodeBlock = !inCodeBlock;
       continue;
     }
@@ -41,8 +42,8 @@ export function extractOutline(markdown: string): Outline[] {
     if (inCodeBlock) continue;
 
     // Check for heading
-    const match = line.match(/^(#{1,6})\s+(.+)$/);
-    if (match) {
+    const match = line?.match(/^(#{1,6})\s+(.+)$/);
+    if (match && match[1] && match[2]) {
       const level = match[1].length;
       const text = match[2].trim();
       headingCounter++;
@@ -56,7 +57,7 @@ export function extractOutline(markdown: string): Outline[] {
       };
 
       // Find parent
-      while (stack.length > 0 && stack[stack.length - 1].level >= level) {
+      while (stack.length > 0 && (stack[stack.length - 1]?.level ?? 0) >= level) {
         stack.pop();
       }
 
@@ -64,8 +65,10 @@ export function extractOutline(markdown: string): Outline[] {
         headings.push(heading);
       } else {
         const parent = stack[stack.length - 1];
-        if (!parent.children) parent.children = [];
-        parent.children.push(heading);
+        if (parent) {
+          if (!parent.children) parent.children = [];
+          parent.children.push(heading);
+        }
       }
 
       stack.push(heading);

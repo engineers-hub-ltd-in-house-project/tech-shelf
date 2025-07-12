@@ -17,14 +17,22 @@
 
 <!-- ヒーローセクション -->
 <section
-  class="min-h-screen bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center"
+  class="min-h-screen bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center"
 >
   <div class="text-center px-4">
     <h1 class="text-5xl font-bold text-white mb-6">Tech Shelf</h1>
     <p class="text-xl text-white/90 mb-8">プログラミングと技術の学習プラットフォーム</p>
     <div class="flex gap-4 justify-center">
-      <a href="/blog" class="btn variant-filled">ブログを読む</a>
-      <a href="/books" class="btn variant-ghost-surface">書籍を見る</a>
+      <a
+        href="/blog"
+        class="px-4 py-2 text-sm font-medium text-white bg-gray-600 rounded-lg hover:bg-gray-700 focus:ring-4 focus:ring-blue-300"
+        >ブログを読む</a
+      >
+      <a
+        href="/books"
+        class="px-4 py-2 text-sm font-medium text-white bg-transparent border border-white rounded-lg hover:bg-white hover:text-blue-600 focus:ring-4 focus:ring-gray-300"
+        >書籍を見る</a
+      >
     </div>
   </div>
 </section>
@@ -40,11 +48,15 @@
         {/each}
       </div>
       <div class="text-center mt-8">
-        <a href="/blog" class="btn variant-filled-primary">すべての記事を見る</a>
+        <a
+          href="/blog"
+          class="px-4 py-2 text-sm font-medium text-white bg-gray-600 rounded-lg hover:bg-gray-700 focus:ring-4 focus:ring-blue-300"
+          >すべての記事を見る</a
+        >
       </div>
     {:else}
       <div class="text-center">
-        <p class="text-lg text-base-content/60">まだ記事がありません。</p>
+        <p class="text-lg text-surface-600 dark:text-surface-400">まだ記事がありません。</p>
       </div>
     {/if}
   </div>
@@ -57,33 +69,44 @@
     {#if recentBooks.length > 0}
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {#each recentBooks as book}
-          <div class="card bg-surface-100 dark:bg-surface-800 shadow-xl">
+          <div class="bg-white dark:bg-surface-800 shadow-lg rounded-lg">
             {#if book.coverImage}
               <header>
                 <img src={book.coverImage} alt={book.title} class="w-full h-48 object-cover" />
               </header>
             {/if}
             <div class="p-4 space-y-4">
-              <h3 class="h4 font-bold">{book.title}</h3>
+              <h3 class="text-lg font-bold">{book.title}</h3>
               <p class="text-surface-600 dark:text-surface-400">{book.description}</p>
               <div class="flex flex-wrap gap-2">
                 {#each book.tags as { tag }}
-                  <span class="badge variant-soft-secondary">{tag.name}</span>
+                  <span
+                    class="inline-flex items-center px-2 py-1 text-xs font-medium text-surface-600 bg-surface-100 rounded dark:bg-surface-700 dark:text-surface-300"
+                    >{tag.name}</span
+                  >
                 {/each}
               </div>
               <div class="flex justify-end">
-                <a href="/books/{book.id}" class="btn btn-sm variant-filled-primary">詳細を見る</a>
+                <a
+                  href="/books/{book.id}"
+                  class="px-3 py-1.5 text-sm font-medium text-white bg-gray-600 rounded-lg hover:bg-gray-700 focus:ring-4 focus:ring-blue-300"
+                  >詳細を見る</a
+                >
               </div>
             </div>
           </div>
         {/each}
       </div>
       <div class="text-center mt-8">
-        <a href="/books" class="btn variant-filled-primary">すべての書籍を見る</a>
+        <a
+          href="/books"
+          class="px-4 py-2 text-sm font-medium text-white bg-gray-600 rounded-lg hover:bg-gray-700 focus:ring-4 focus:ring-blue-300"
+          >すべての書籍を見る</a
+        >
       </div>
     {:else}
       <div class="text-center">
-        <p class="text-lg text-base-content/60">まだ書籍がありません。</p>
+        <p class="text-lg text-surface-600 dark:text-surface-400">まだ書籍がありません。</p>
       </div>
     {/if}
   </div>
@@ -96,7 +119,7 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
       <div class="text-center">
         <div
-          class="w-16 h-16 bg-primary-500 rounded-full flex items-center justify-center mx-auto mb-4"
+          class="w-16 h-16 bg-gray-500 rounded-full flex items-center justify-center mx-auto mb-4"
         >
           <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
@@ -114,7 +137,7 @@
       </div>
       <div class="text-center">
         <div
-          class="w-16 h-16 bg-primary-500 rounded-full flex items-center justify-center mx-auto mb-4"
+          class="w-16 h-16 bg-gray-500 rounded-full flex items-center justify-center mx-auto mb-4"
         >
           <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
@@ -132,7 +155,7 @@
       </div>
       <div class="text-center">
         <div
-          class="w-16 h-16 bg-primary-500 rounded-full flex items-center justify-center mx-auto mb-4"
+          class="w-16 h-16 bg-gray-500 rounded-full flex items-center justify-center mx-auto mb-4"
         >
           <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path

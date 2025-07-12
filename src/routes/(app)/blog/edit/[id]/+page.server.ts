@@ -50,7 +50,13 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
 
   return {
     post: {
-      ...post,
+      id: post.id,
+      title: post.title,
+      slug: post.slug,
+      content: post.content,
+      excerpt: post.excerpt,
+      isPublished: post.isPublished,
+      publishedAt: post.publishedAt,
       tags: post.tags.map((t) => t.tag.name).join(', '),
     },
   };

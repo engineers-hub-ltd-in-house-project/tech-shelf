@@ -26,6 +26,8 @@ export default [
         document: 'readonly',
         CustomEvent: 'readonly',
         globalThis: 'readonly',
+        FormData: 'readonly',
+        fetch: 'readonly',
       },
     },
     plugins: {
@@ -60,6 +62,8 @@ export default [
         document: 'readonly',
         CustomEvent: 'readonly',
         globalThis: 'readonly',
+        FormData: 'readonly',
+        fetch: 'readonly',
       },
     },
     plugins: {
