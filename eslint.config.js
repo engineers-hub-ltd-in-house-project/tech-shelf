@@ -22,6 +22,10 @@ export default [
         console: 'readonly',
         URL: 'readonly',
         HTMLDivElement: 'readonly',
+        window: 'readonly',
+        document: 'readonly',
+        CustomEvent: 'readonly',
+        globalThis: 'readonly',
       },
     },
     plugins: {
@@ -52,6 +56,10 @@ export default [
         console: 'readonly',
         URL: 'readonly',
         HTMLDivElement: 'readonly',
+        window: 'readonly',
+        document: 'readonly',
+        CustomEvent: 'readonly',
+        globalThis: 'readonly',
       },
     },
     plugins: {

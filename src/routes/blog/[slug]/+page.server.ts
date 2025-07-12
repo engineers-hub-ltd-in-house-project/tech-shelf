@@ -1,11 +1,10 @@
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '$lib/server/database';
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
-const prisma = new PrismaClient();
-
-export const load: PageServerLoad = async ({ params }) => {
-  const post = await prisma.blogPost.findUnique({
+export const load: PageServerLoad = async ({ params, cookies }) => {
+  // まず公開記事を探す
+  let post = await prisma.blogPost.findFirst({
     where: {
       slug: params.slug,
       isPublished: true,
@@ -24,6 +23,44 @@ export const load: PageServerLoad = async ({ params }) => {
       },
     },
   });
+
+  // 公開記事が見つからない場合、下書きも含めて検索（作者本人の場合）
+  if (!post) {
+    const authCookie = cookies.get('mock-auth');
+    if (authCookie) {
+      try {
+        const user = JSON.parse(authCookie);
+        const existingUser = await prisma.user.findUnique({
+          where: { email: user.email },
+        });
+
+        if (existingUser) {
+          // 作者本人なら下書きも表示
+          post = await prisma.blogPost.findFirst({
+            where: {
+              slug: params.slug,
+              userId: existingUser.id,
+            },
+            include: {
+              tags: {
+                include: {
+                  tag: true,
+                },
+              },
+              author: {
+                select: {
+                  name: true,
+                  avatar: true,
+                },
+              },
+            },
+          });
+        }
+      } catch {
+        // 認証エラーは無視
+      }
+    }
+  }
 
   if (!post) {
     throw error(404, 'ブログ記事が見つかりません');
