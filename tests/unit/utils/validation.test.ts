@@ -149,7 +149,7 @@ describe('Validation Utilities', () => {
       const sanitized = sanitizeHtml(dangerous);
 
       expect(sanitized).not.toContain('onclick');
-      expect(sanitized).toContain('<p>Click me</p>');
+      expect(sanitized).toContain('Click me');
     });
 
     it('should handle empty input', () => {

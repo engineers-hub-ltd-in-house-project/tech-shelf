@@ -104,7 +104,7 @@ export function sanitizeHtml(html: string): string {
   // スクリプトタグを除去
   let sanitized = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
 
-  // イベントハンドラ属性を除去
+  // イベントハンドラ属性を除去（スペースとイベント属性全体を削除）
   sanitized = sanitized.replace(/\s+on\w+\s*=\s*["'][^"']*["']/gi, '');
 
   // 危険な属性を除去
