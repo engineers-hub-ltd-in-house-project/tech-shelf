@@ -1,7 +1,5 @@
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '$lib/server/database';
 import type { PageServerLoad } from './$types';
-
-const prisma = new PrismaClient();
 
 export const load: PageServerLoad = async () => {
   const [recentPosts, recentBooks] = await Promise.all([
