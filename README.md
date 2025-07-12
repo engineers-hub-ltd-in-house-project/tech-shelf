@@ -6,36 +6,29 @@ Tech Shelfは、技術書籍の閲覧と配信に特化したWebプラットフ�
 
 ## 主な機能
 
-- 電子書籍の閲覧（EPUB/PDF対応）
-- 技術ブログ機能
-- ブックマーク・ハイライト機能
-- 読書進捗管理
-- マルチアカウント対応（Google/GitHub認証）
-- Stripe決済統合
-- 高速検索（MeiliSearch）
+- 技術ブログ機能（Markdown対応）
+- 書籍プロジェクト管理（ブログ記事から書籍作成）
+- ブックマーク・進捗管理
+- モック認証システム（開発用）
+- タグ管理・分類機能
 
 ## 技術スタック
 
 - **フレームワーク**: SvelteKit v2 + Svelte 5
 - **言語**: TypeScript 5.0+
-- **スタイリング**: Tailwind CSS + DaisyUI
-- **データベース**:
-  - 開発: SQLite
-  - 本番: Supabase (PostgreSQL)
-- **ORM**: Prisma
-- **認証**: Supabase Auth
-- **電子書籍**: epub.js, PDF.js
-- **検索**: MeiliSearch
-- **決済**: Stripe
+- **スタイリング**: TailwindCSS v4 + Flowbite Svelte
+- **データベース**: SQLite with Prisma ORM
+- **認証**: Mock authentication using cookies (開発用)
+- **Markdown**: marked + shiki (コードハイライト)
+- **テスト**: Vitest (unit) + Playwright (E2E)
+- **コード品質**: ESLint + Prettier + lefthook
 
 ## 開発環境のセットアップ
 
 ### 前提条件
 
 - Node.js 22以上
-- npm または pnpm
-
-詳細なセットアップ手順については [セットアップガイド](docs/setup-guide.md) を参照してください。
+- npm
 
 ### クイックスタート
 
@@ -43,14 +36,12 @@ Tech Shelfは、技術書籍の閲覧と配信に特化したWebプラットフ�
 # 依存関係のインストール
 npm install
 
-# 環境変数のセットアップ
-cp .env.example .env
+# データベースのセットアップと開発サーバー起動
+npm run dev:setup
 
-# データベースの初期化
-npx prisma migrate dev
-
-# 開発サーバーの起動
-npm run dev
+# または個別実行
+npm run db:setup  # マイグレーション + シード
+npm run dev       # 開発サーバー起動
 ```
 
 ## プロジェクト構成
@@ -75,34 +66,57 @@ tech-shelf/
 
 ## 認証システム（開発環境）
 
-開発環境ではモック認証システムを使用しています。詳細は [セットアップガイド](docs/setup-guide.md#認証システムの使い方) を参照してください。
+開発環境ではモック認証システムを使用しています：
+
+- クッキーベースの認証
+- テストユーザーでの自動ログイン
+- `requireAuth()` ヘルパー関数による認証チェック
 
 ## 開発コマンド
 
 ```bash
-# 開発サーバー
-npm run dev
+# 開発
+npm run dev              # 開発サーバー起動 (port 5173)
+npm run dev:setup       # DB設定 + 開発サーバー起動
+
+# データベース
+npm run db:setup        # マイグレーション + シード
+npm run db:migrate      # マイグレーション実行
+npm run db:seed         # シードデータ投入
+npm run db:reset        # データベースリセット
+npx prisma studio       # Prisma Studio GUI
+
+# テスト
+npm run test            # 全テスト実行
+npm run test:unit       # ユニットテストのみ
+npm run test:e2e        # E2Eテストのみ
+npm run test:watch      # テストウォッチモード
+
+# コード品質
+npm run check           # svelte-check (型チェック)
+npm run lint            # ESLint + Prettier チェック
+npm run format          # コードフォーマット
 
 # ビルド
-npm run build
-
-# プレビュー
-npm run preview
-
-# 型チェック
-npm run check
-
-# 型チェック（ウォッチモード）
-npm run check:watch
+npm run build           # プロダクションビルド
+npm run preview         # ビルド結果プレビュー
 ```
 
-## 記事資料
+## 主要機能
 
-`docs/articles/` ディレクトリに、Rustプログラミング言語に関する電子書籍の構成案があります：
+### ブログ機能
 
-- 第1部: Rust基本編
-- 第2部: Rust応用編
-- 第3部: Rust実践編（DDD）
+- Markdownでの記事作成・編集
+- タグによる分類
+- 公開/下書き管理
+- スラッグベースのURL
+
+### 書籍プロジェクト
+
+- ブログ記事から書籍を作成
+- 章立て管理
+- 記事の順序制御
+- プロジェクト進捗管理
 
 ## ライセンス
 
