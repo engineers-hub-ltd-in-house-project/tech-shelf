@@ -5,7 +5,7 @@
 
   export let data: PageData;
 
-  const { post, relatedPosts } = data;
+  const { post, relatedPosts, isAuthor } = data;
 </script>
 
 <svelte:head>
@@ -38,6 +38,15 @@
   <!-- 記事本文 -->
   <section class="mb-12">
     <BlogPost {post} />
+
+    {#if isAuthor}
+      <div class="mt-6 flex gap-3">
+        <a href="/blog/edit/{post.id}" class="btn btn-primary"> 記事を編集 </a>
+        {#if !post.isPublished}
+          <span class="badge badge-warning">下書き</span>
+        {/if}
+      </div>
+    {/if}
   </section>
 
   <!-- 著者情報 -->

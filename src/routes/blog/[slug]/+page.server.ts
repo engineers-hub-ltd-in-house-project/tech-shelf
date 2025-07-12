@@ -102,11 +102,29 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
     take: 3,
   });
 
+  // 現在のユーザーが作者かどうかチェック
+  let isAuthor = false;
+  const authCookie = cookies.get('mock-auth');
+  if (authCookie) {
+    try {
+      const user = JSON.parse(authCookie);
+      const currentUser = await prisma.user.findUnique({
+        where: { email: user.email },
+      });
+      if (currentUser && currentUser.id === post.userId) {
+        isAuthor = true;
+      }
+    } catch {
+      // 認証エラーは無視
+    }
+  }
+
   return {
     post: {
       ...post,
       viewCount: post.viewCount + 1, // 更新後のビュー数を返す
     },
     relatedPosts,
+    isAuthor,
   };
 };

@@ -47,6 +47,12 @@
 
         <div class="flex items-center gap-4">
           {#if $auth.user}
+            <a
+              href="/blog/my"
+              class="text-surface-600 dark:text-surface-300 hover:text-primary-500 transition-colors"
+            >
+              マイブログ
+            </a>
             <a href="/blog/create" class="btn variant-filled-secondary">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
