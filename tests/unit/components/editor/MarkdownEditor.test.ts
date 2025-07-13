@@ -1,27 +1,51 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render } from '@testing-library/svelte';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render } from '@testing-library/svelte/svelte5';
 import MarkdownEditor from '$lib/components/editor/MarkdownEditor.svelte';
 
+// Mock Svelte lifecycle functions for server-side rendering
+vi.mock('svelte', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    onMount: vi.fn((fn) => fn()),
+    onDestroy: vi.fn(),
+    tick: vi.fn(() => Promise.resolve()),
+    createEventDispatcher: vi.fn(() => vi.fn()),
+  };
+});
+
 // CodeMirrorのモック
-vi.mock('codemirror', () => ({
-  EditorView: vi.fn().mockImplementation(() => ({
-    dom: document.createElement('div'),
-    destroy: vi.fn(),
-    dispatch: vi.fn(),
-    state: {
-      doc: {
-        toString: () => 'test content',
-        length: 12,
-      },
-      selection: {
-        main: {
-          head: 0,
-          from: 0,
-          to: 0,
-        },
+const mockEditorView = {
+  dom: document.createElement('div'),
+  destroy: vi.fn(),
+  dispatch: vi.fn(),
+  state: {
+    doc: {
+      toString: () => 'test content',
+      length: 12,
+    },
+    selection: {
+      main: {
+        head: 0,
+        from: 0,
+        to: 0,
       },
     },
-  })),
+  },
+};
+
+vi.mock('codemirror', () => ({
+  EditorView: Object.assign(
+    vi.fn().mockImplementation(() => mockEditorView),
+    {
+      updateListener: {
+        of: vi.fn(() => ({})),
+      },
+      domEventHandlers: vi.fn(() => ({})),
+      theme: vi.fn(() => ({})),
+    }
+  ),
+  basicSetup: {},
 }));
 
 vi.mock('@codemirror/state', () => ({
@@ -38,7 +62,20 @@ vi.mock('@codemirror/theme-one-dark', () => ({
   oneDark: vi.fn(),
 }));
 
+// Mock DragEvent for Node.js environment
+class MockDragEvent extends Event {
+  dataTransfer: any;
+  constructor(type: string, init: any) {
+    super(type, init);
+    this.dataTransfer = init.dataTransfer;
+  }
+}
+global.DragEvent = MockDragEvent as any;
+
 describe('MarkdownEditor', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
   it('should render editor', () => {
     const { container } = render(MarkdownEditor, {
       props: {

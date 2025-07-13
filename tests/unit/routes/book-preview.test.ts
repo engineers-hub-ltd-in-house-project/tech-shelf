@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { load } from '$routes/(app)/book-projects/[id]/preview/+page.server';
+import { load } from '../../../src/routes/(app)/book-projects/[id]/preview/+page.server';
 import { error } from '@sveltejs/kit';
 import type { RequestEvent } from '@sveltejs/kit';
 
@@ -17,7 +17,9 @@ vi.mock('$lib/server/auth-helper', () => ({
 }));
 
 vi.mock('@sveltejs/kit', () => ({
-  error: vi.fn(),
+  error: vi.fn().mockImplementation((status, message) => {
+    throw new Error(`${status}: ${message}`);
+  }),
 }));
 
 import { prisma } from '$lib/server/database';
@@ -118,8 +120,7 @@ describe('Book Preview Page Server', () => {
       cookies: {},
     } as unknown as RequestEvent;
 
-    await load(mockEvent);
-
+    await expect(load(mockEvent)).rejects.toThrow('404: プロジェクトが見つかりません');
     expect(error).toHaveBeenCalledWith(404, 'プロジェクトが見つかりません');
   });
 
@@ -140,8 +141,9 @@ describe('Book Preview Page Server', () => {
       cookies: {},
     } as unknown as RequestEvent;
 
-    await load(mockEvent);
-
+    await expect(load(mockEvent)).rejects.toThrow(
+      '403: このプロジェクトへのアクセス権限がありません'
+    );
     expect(error).toHaveBeenCalledWith(403, 'このプロジェクトへのアクセス権限がありません');
   });
 });

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { load } from '$routes/search/+page.server';
+import { load } from '../../../src/routes/search/+page.server';
 import type { RequestEvent } from '@sveltejs/kit';
 
 // Prismaのモック
