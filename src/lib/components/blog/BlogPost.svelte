@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { BlogPost, Tag } from '@prisma/client';
+  import { marked } from 'marked';
 
   export let post: BlogPost & { tags: { tag: Tag }[] };
 
@@ -10,6 +11,10 @@
       day: 'numeric',
     });
   };
+
+  function renderMarkdown(content: string): string {
+    return marked(content) as string;
+  }
 </script>
 
 <article class="max-w-4xl mx-auto">
@@ -56,8 +61,8 @@
   </header>
 
   <div class="prose prose-lg max-w-none">
-    <!-- content will be rendered by mdsvex -->
-    {@html post.content}
+    <!-- content will be rendered by marked -->
+    {@html renderMarkdown(post.content)}
   </div>
 </article>
 
@@ -132,6 +137,13 @@
 
   :global(.prose a:hover) {
     text-decoration: none;
+  }
+
+  :global(.prose img) {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    margin: 1rem 0;
   }
 
   :global(.code-wrapper[data-theme='dark']) {
