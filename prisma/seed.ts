@@ -106,8 +106,7 @@ async function main() {
       author: 'テストユーザー',
       description:
         'Rustの基礎から実践的なアプリケーション開発まで学べる総合ガイド。所有権システム、並行プログラミング、Webアプリケーション開発まで幅広くカバー。',
-      coverImage:
-        'https://via.placeholder.com/400x600/FF6B6B/FFFFFF?text=Rust%E5%AE%9F%E8%B7%B5%E3%82%AC%E3%82%A4%E3%83%89',
+      coverImage: '/images/books/rust-practice-guide.svg',
       price: 2980,
       currency: 'JPY',
       language: 'ja',
@@ -128,8 +127,7 @@ async function main() {
       author: 'テストユーザー',
       description:
         'TypeScriptの基本から応用まで、型システムを活用した堅牢なアプリケーション開発を学ぶ。React、Next.jsとの統合も詳しく解説。',
-      coverImage:
-        'https://via.placeholder.com/400x600/4ECDC4/FFFFFF?text=TypeScript%E5%AE%8C%E5%85%A8%E3%82%AC%E3%82%A4%E3%83%89',
+      coverImage: '/images/books/typescript-complete-guide.svg',
       price: 3480,
       currency: 'JPY',
       language: 'ja',
@@ -150,8 +148,7 @@ async function main() {
       author: 'テストユーザー',
       description:
         'コンテナ技術の基礎から本番環境での運用まで。DockerとKubernetesを使った現代的なアプリケーション開発・デプロイメント手法を解説。',
-      coverImage:
-        'https://via.placeholder.com/400x600/45B7D1/FFFFFF?text=Docker%20%26%20Kubernetes',
+      coverImage: '/images/books/docker-kubernetes.svg',
       price: 3980,
       currency: 'JPY',
       language: 'ja',
@@ -172,8 +169,7 @@ async function main() {
       author: 'テストユーザー',
       description:
         'プログラミング初心者のための入門書。変数、条件分岐、ループなどの基本概念から、簡単なWebアプリケーション作成まで。',
-      coverImage:
-        'https://via.placeholder.com/400x600/F7DC6F/333333?text=%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0%E5%85%A5%E9%96%80',
+      coverImage: '/images/books/programming-intro.svg',
       price: 0,
       currency: 'JPY',
       language: 'ja',
@@ -194,8 +190,7 @@ async function main() {
       author: 'テストユーザー',
       description:
         'DDDの基本概念から実装パターンまで。集約、エンティティ、値オブジェクトなどの実装方法を具体的なコード例とともに解説。',
-      coverImage:
-        'https://via.placeholder.com/400x600/9B59B6/FFFFFF?text=DDD%E5%AE%9F%E8%B7%B5%E5%85%A5%E9%96%80',
+      coverImage: '/images/books/ddd-practice-intro.svg',
       price: 4280,
       currency: 'JPY',
       language: 'ja',

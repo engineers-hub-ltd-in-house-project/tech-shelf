@@ -4,7 +4,7 @@
 
   export let book: BookWithChapters;
 
-  const placeholderImage = 'https://via.placeholder.com/400x600?text=No+Cover';
+  const placeholderImage = '/images/books/no-cover.svg';
 
   const categoryLabels: Record<string, string> = {
     programming: 'プログラミング',

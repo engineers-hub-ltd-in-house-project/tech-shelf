@@ -4,7 +4,7 @@
 
   export let book: BookWithDetails;
 
-  const placeholderImage = 'https://via.placeholder.com/300x450?text=No+Cover';
+  const placeholderImage = '/images/books/no-cover.svg';
 </script>
 
 <article
