@@ -72,6 +72,14 @@ export const actions: Actions = {
     const content = formData.get('content') as string;
     const tags = formData.get('tags') as string;
     const published = formData.get('published') === 'on';
+    const uploadedImagesJson = formData.get('uploadedImages') as string;
+
+    let uploadedImages: string[] = [];
+    try {
+      uploadedImages = JSON.parse(uploadedImagesJson || '[]');
+    } catch {
+      uploadedImages = [];
+    }
 
     // 認証チェック
     const authCookie = cookies.get('mock-auth');
@@ -164,6 +172,44 @@ export const actions: Actions = {
             },
           },
         });
+
+        // 画像を保存し、コンテンツ内のBase64 URLを実際のURLに置換
+        let updatedContent = content;
+
+        for (const base64Image of uploadedImages) {
+          // Base64データから画像情報を抽出
+          const matches = base64Image.match(/^data:([^;]+);base64,(.+)$/);
+          if (!matches) continue;
+
+          const mimeType = matches[1];
+          const base64Data = matches[2];
+          if (!mimeType || !base64Data) continue;
+
+          const buffer = Buffer.from(base64Data, 'base64');
+
+          // 画像をデータベースに保存
+          const savedImage = await tx.blogImage.create({
+            data: {
+              blogPostId: id,
+              filename: `image-${Date.now()}.${mimeType.split('/')[1]}`,
+              mimeType,
+              size: buffer.length,
+              data: buffer,
+            },
+          });
+
+          // コンテンツ内のBase64 URLを実際のURLに置換
+          const imageUrl = `/blog/image/${savedImage.id}`;
+          updatedContent = updatedContent.replace(base64Image, imageUrl);
+        }
+
+        // コンテンツを更新
+        if (uploadedImages.length > 0) {
+          await tx.blogPost.update({
+            where: { id },
+            data: { content: updatedContent },
+          });
+        }
       });
 
       // 成功時はリダイレクト

@@ -18,6 +18,7 @@
   let showOutline = true;
   let darkMode = false;
   let saving = false;
+  let uploadedImages: string[] = [];
 
   $: editor.updateContent(content);
 
@@ -45,6 +46,21 @@
 
   function handleSubmit() {
     saving = true;
+  }
+
+  async function handleImageUpload(file: globalThis.File): Promise<string> {
+    // 画像をBase64に変換
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const base64 = e.target?.result as string;
+        // Base64データを一時的に保存
+        uploadedImages.push(base64);
+        resolve(base64);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
   }
 </script>
 
@@ -212,13 +228,14 @@
     <div class="editor-main">
       {#if showOutline}
         <div class="outline-pane">
-          <OutlinePane />
+          <OutlinePane {content} onReorder={(newContent) => (content = newContent)} />
         </div>
       {/if}
 
       <div class="editor-pane">
         <input type="hidden" name="content" bind:value={content} />
-        <MarkdownEditor bind:value={content} {darkMode} />
+        <input type="hidden" name="uploadedImages" value={JSON.stringify(uploadedImages)} />
+        <MarkdownEditor bind:value={content} {darkMode} onImageUpload={handleImageUpload} />
       </div>
 
       {#if showPreview}

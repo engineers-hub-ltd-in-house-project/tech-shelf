@@ -155,6 +155,7 @@ model BlogPost {
   author      User      @relation(fields: [userId], references: [id])
   tags        BlogTag[]
   bookProjects BookProjectPost[]
+  images      BlogImage[]
   
   @@map("blog_posts")
 }
@@ -248,4 +249,20 @@ model BookProjectChapter {
   
   @@unique([projectId, order])
   @@map("book_project_chapters")
+}
+
+model BlogImage {
+  id          String   @id @default(cuid())
+  blogPostId  String
+  filename    String
+  mimeType    String
+  size        Int
+  data        Bytes    // Base64エンコードされた画像データ
+  alt         String?
+  createdAt   DateTime @default(now())
+  
+  // Relations
+  blogPost    BlogPost @relation(fields: [blogPostId], references: [id], onDelete: Cascade)
+  
+  @@map("blog_images")
 }

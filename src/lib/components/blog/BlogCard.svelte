@@ -1,7 +1,10 @@
 <script lang="ts">
   import type { BlogPost, Tag } from '@prisma/client';
 
-  export let post: BlogPost & { tags: { tag: Tag }[] };
+  export let post: BlogPost & {
+    tags: { tag: Tag }[];
+    author?: { name: string; avatar?: string | null };
+  };
   export let href: string = `/blog/${post.slug}`;
 
   const formatDate = (date: Date | string) => {
@@ -41,9 +44,13 @@
     </div>
 
     <div class="flex justify-between items-center">
-      <span class="text-sm text-gray-500 dark:text-gray-500">
-        {formatDate(post.publishedAt || post.createdAt)}
-      </span>
+      <div class="text-sm text-gray-500 dark:text-gray-500">
+        {#if post.author}
+          <span>{post.author.name}</span>
+          <span class="mx-1">•</span>
+        {/if}
+        <span>{formatDate(post.publishedAt || post.createdAt)}</span>
+      </div>
       <a
         {href}
         class="px-3 py-1.5 text-sm font-medium text-white bg-gray-600 rounded-lg hover:bg-gray-700 focus:ring-4 focus:ring-blue-300 dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-blue-800"

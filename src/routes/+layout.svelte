@@ -43,9 +43,45 @@
             class="text-surface-600 dark:text-surface-300 hover:text-gray-800 dark:text-gray-200 transition-colors"
             >電子書籍</a
           >
+          <a
+            href="/search"
+            class="text-surface-600 dark:text-surface-300 hover:text-gray-800 dark:text-gray-200 transition-colors"
+            >検索</a
+          >
         </div>
 
         <div class="flex items-center gap-4">
+          <form action="/search" method="GET" class="hidden lg:block">
+            <div class="relative">
+              <input
+                type="text"
+                name="q"
+                placeholder="検索..."
+                class="w-48 px-3 py-1.5 pr-8 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+              />
+              <button
+                type="submit"
+                class="absolute right-2 top-1.5 text-gray-500 hover:text-gray-700"
+                aria-label="検索"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <path d="m21 21-4.35-4.35"></path>
+                </svg>
+              </button>
+            </div>
+          </form>
+
           {#if $auth.user}
             <a
               href="/blog/my"

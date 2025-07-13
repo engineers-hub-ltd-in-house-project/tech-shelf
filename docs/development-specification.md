@@ -601,6 +601,8 @@ model BlogPost {
   bookChapters  Chapter[]      @relation("ChapterSource")
   bookProjects  BookProjectPost[]
 
+  images        BlogImage[]    // 記事に関連する画像
+
   @@map("blog_posts")
 }
 
@@ -654,6 +656,22 @@ model BookProjectPost {
 
   @@unique([projectId, postId])
   @@map("book_project_posts")
+}
+
+model BlogImage {
+  id          String   @id @default(cuid())
+  blogPostId  String
+  filename    String
+  mimeType    String
+  size        Int
+  data        Bytes    // Base64エンコードされた画像データ
+  alt         String?
+  createdAt   DateTime @default(now())
+
+  // Relations
+  blogPost    BlogPost @relation(fields: [blogPostId], references: [id], onDelete: Cascade)
+
+  @@map("blog_images")
 }
 
 // ... その他のモデル（Purchase, ReadingSession, Bookmark, Tag関連）は既存のまま
@@ -871,6 +889,56 @@ NODE_ENV=development
    - 電子書籍のアクセス制御
    - ダウンロード制限
    - AI生成コンテンツの著作権管理
+
+## 新機能実装（2025年7月）
+
+### 1. 階層構造エディタの強化
+
+- **ドラッグ&ドロップ機能**
+  - `svelte-dnd-action`を使用した見出しの並び替え
+  - リアルタイムでコンテンツの順序を更新
+  - アニメーション付きの視覚的フィードバック
+
+- **折りたたみ機能**
+  - 階層構造の展開/折りたたみ
+  - 折りたたみ状態の保持
+  - 子要素を持つ見出しにインジケーター表示
+
+### 2. 画像アップロード機能
+
+- **ドラッグ&ドロップ対応**
+  - MarkdownEditorへの画像ドラッグ&ドロップ
+  - 複数画像の同時アップロード対応
+  - アップロード中のプレースホルダー表示
+
+- **画像データ管理**
+  - BlogImageモデルの追加（Base64形式で保存）
+  - 専用エンドポイント（`/blog/image/[id]`）での画像配信
+  - 自動的なMarkdown内のURLの置換
+
+### 3. 検索機能
+
+- **統合検索ページ（`/search`）**
+  - ブログ記事と書籍の横断検索
+  - タイトル、本文、概要、タグでの検索
+  - 検索タイプフィルター（すべて/ブログ/書籍）
+
+- **UI/UX改善**
+  - ヘッダーに検索バー追加
+  - 検索結果の分類表示
+  - 検索結果がない場合の案内表示
+
+### 4. 書籍プレビュー機能
+
+- **プレビューページ（`/book-projects/[id]/preview`）**
+  - 書籍化前の構成確認
+  - 章構成と記事の順序表示
+  - 読書体験に近いレイアウト
+
+- **ナビゲーション機能**
+  - 目次からの章移動
+  - 目次の表示/非表示切り替え
+  - スムーズスクロール
 
 ## テスト実装方針
 

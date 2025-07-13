@@ -72,6 +72,13 @@
           >
             書籍を表示
           </a>
+        {:else}
+          <a
+            href="/book-projects/{data.project.id}/preview"
+            class="px-4 py-2 text-sm font-medium rounded-lg ghost-primary"
+          >
+            プレビュー
+          </a>
         {/if}
         <button class="px-4 py-2 text-sm font-medium rounded-lg filled-primary">
           書籍を生成
