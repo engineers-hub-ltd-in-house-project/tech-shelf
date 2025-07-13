@@ -95,7 +95,7 @@ Tech Shelfは、技術ブログの執筆から電子書籍の出版までをシ�
   - ✅ タブベースUI（記事管理/章構成/設定）
   - ✅ ドラッグ&ドロップによる記事並び替え（svelte-dnd-action）
 - ✅ 書籍プレビュー機能（/book-projects/[id]/preview）
-- ❌ 書籍の最終生成・PDF/ePub出力
+- ✅ 書籍の最終生成・PDF/ePub出力（2025年7月13日実装完了）
 
 #### その他の実装済み機能
 
@@ -122,7 +122,7 @@ Tech Shelfは、技術ブログの執筆から電子書籍の出版までをシ�
 
 #### Phase 4: 電子書籍作成機能（残り）
 
-- ❌ 書籍の最終生成・PDF/ePub出力
+- ✅ 書籍の最終生成・PDF/ePub出力（2025年7月13日実装完了）
 - ❌ AI章構成提案
 - ❌ 統合エディタの完全実装（章の分割・結合機能）
 
@@ -1262,3 +1262,160 @@ jobs:
 | Melt UI         | ✅             | ✅             | ✅       | ヘッドレス候補    |
 
 この記録により、同様の技術的問題の再発防止と、将来の技術選定時の参考資料とする。
+
+## 📦 書籍生成機能（PDF/ePub）の実装ガイド
+
+### 2025年7月13日: 書籍生成機能の実装完了
+
+#### 概要
+
+書籍プロジェクトからPDF/ePub形式でのダウンロード可能な電子書籍を生成する機能を実装。
+
+#### 実装内容
+
+1. **必要パッケージ**
+   - `puppeteer`: ^24.12.1 - PDF生成用ヘッドレスChrome
+   - `epub-gen-memory`: ^1.1.2 - ePub形式生成ライブラリ
+
+2. **生成フロー**
+   - プロジェクト詳細ページから「書籍を生成」ボタンで開始
+   - PDF/ePub形式を選択してモーダルで生成
+   - 非同期処理でステータス更新
+   - 完了後、ダウンロードリンク表示
+
+3. **ファイル管理**
+   - 生成ファイルは `static/generated/` に保存
+   - URLパターン: `/generated/[projectId]-[timestamp].[pdf|epub]`
+   - 本番環境では適切なオブジェクトストレージへの移行を推奨
+
+#### ローカル開発環境での必要な依存関係
+
+##### WSL2/Ubuntu環境
+
+```bash
+# Puppeteer（Chrome）の動作に必要なシステムライブラリ
+sudo apt-get update && sudo apt-get install -y \
+  libnss3 \
+  libnspr4 \
+  libatk-bridge2.0-0t64 \
+  libcups2t64 \
+  libdrm2 \
+  libxkbcommon0 \
+  libxcomposite1 \
+  libxdamage1 \
+  libxfixes3 \
+  libxrandr2 \
+  libgbm1 \
+  libasound2t64
+
+# 日本語フォント（PDF内の日本語表示に必須）
+sudo apt-get install -y fonts-noto-cjk fonts-noto
+```
+
+##### macOS環境
+
+```bash
+# Homebrewでインストール
+brew install --cask chromium
+
+# 日本語フォントは通常システムに含まれている
+```
+
+##### Windows環境
+
+- WSL2を使用する場合は上記Ubuntu環境の手順に従う
+- ネイティブWindows環境ではPuppeteerが自動的にChromiumをダウンロード
+
+#### 本番環境での考慮事項
+
+##### 1. デプロイ先別の対応
+
+**Vercel/Netlifyなどのサーバーレス環境**
+
+- Puppeteerは動作不可（実行時間・メモリ制限）
+- 代替案：
+  - 外部API（Puppeteer as a Service、Browserless.io等）
+  - AWS Lambda + chrome-aws-lambda
+  - 専用のマイクロサービス
+
+**Docker/VPS環境**
+
+```dockerfile
+# Dockerfile例
+FROM node:22-slim
+
+# Puppeteer依存関係インストール
+RUN apt-get update && apt-get install -y \
+    chromium \
+    fonts-noto-cjk \
+    --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
+
+# Puppeteer設定
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
+```
+
+**Google Cloud Run**
+
+```yaml
+# cloudbuild.yaml
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/tech-shelf', '.']
+```
+
+##### 2. ファイルストレージ
+
+開発環境では `static/generated/` を使用しているが、本番環境では以下を推奨：
+
+- **Supabase Storage**: 既存のSupabase統合と親和性高
+- **AWS S3 / Google Cloud Storage**: 大規模配信向け
+- **CDN**: CloudFront、Cloudflare等でキャッシュ配信
+
+##### 3. セキュリティ考慮事項
+
+- 生成ファイルへのアクセス制御（認証済みユーザーのみ）
+- 一時URLの発行（署名付きURL）
+- レート制限（生成処理の負荷対策）
+
+##### 4. スケーリング対策
+
+- 生成処理のキューイング（Bull、BeeQueue等）
+- バックグラウンドジョブとして実装
+- 生成完了通知（メール、Webhook）
+
+#### 実装時の注意点
+
+1. **メモリ使用量**
+   - Puppeteerは大量のメモリを使用
+   - 複数同時生成時はメモリ不足に注意
+
+2. **タイムアウト設定**
+   - 大きなプロジェクトでは生成に時間がかかる
+   - 適切なタイムアウト値の設定が必要
+
+3. **エラーハンドリング**
+   - Chrome起動失敗時の再試行
+   - 部分的な生成失敗の検知
+
+#### テスト実装済み
+
+- 単体テスト: BookGenerationService の各メソッド
+- 統合テスト: 生成エンドポイントの動作確認
+- エラーケース: 権限チェック、同時実行制御
+
+#### 今後の改善案
+
+1. **プレビュー機能強化**
+   - PDFプレビュー表示
+   - ePubオンラインリーダー
+
+2. **カスタマイズオプション**
+   - フォントサイズ・余白調整
+   - カバーページデザイン
+   - 目次スタイル選択
+
+3. **バッチ処理**
+   - 複数プロジェクトの一括生成
+   - スケジュール生成

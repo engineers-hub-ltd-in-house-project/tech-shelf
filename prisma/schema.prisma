@@ -201,7 +201,15 @@ model BookCreationProject {
   userId      String
   title       String
   description String?
-  status      String    @default("draft") // draft, in_progress, review, published
+  status      String    @default("draft") // draft, in_progress, review, published, generating
+  
+  // Generation status
+  generationStatus String? // null, generating_pdf, generating_epub, completed, failed
+  generationError  String?
+  pdfUrl          String?
+  epubUrl         String?
+  lastGeneratedAt DateTime?
+  
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   

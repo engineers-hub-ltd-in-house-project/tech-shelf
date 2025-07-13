@@ -33,6 +33,7 @@ export default [
         DragEvent: 'readonly',
         Buffer: 'readonly',
         alert: 'readonly',
+        process: 'readonly',
       },
     },
     plugins: {
@@ -74,6 +75,7 @@ export default [
         DragEvent: 'readonly',
         Buffer: 'readonly',
         alert: 'readonly',
+        process: 'readonly',
       },
     },
     plugins: {

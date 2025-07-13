@@ -21,6 +21,9 @@
   let showAddPost = false;
   let showAddChapter = false;
   let selectedPostForChapter: string | null = null;
+  let showGenerateModal = false;
+  let isGenerating = false;
+  let generationError: string | null = null;
 
   function handleDndConsider(e: CustomEvent) {
     draggedPosts = e.detail.items;
@@ -47,6 +50,50 @@
   function getChapterPosts(chapterId: string | null) {
     return draggedPosts.filter((p) => p.chapterId === chapterId);
   }
+
+  async function generateBook(format: 'pdf' | 'epub') {
+    isGenerating = true;
+    generationError = null;
+
+    try {
+      const response = await fetch(`/book-projects/${data.project.id}/generate`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ format }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Generation failed');
+      }
+
+      // Download the generated file
+      window.location.href = result.url;
+      showGenerateModal = false;
+    } catch (error) {
+      generationError = error instanceof Error ? error.message : 'Unknown error occurred';
+    } finally {
+      isGenerating = false;
+    }
+  }
+
+  // Commented out unused function to pass linting
+  // async function _checkGenerationStatus() {
+  //   try {
+  //     const response = await fetch(`/book-projects/${data.project.id}/generate`);
+  //     const status = await response.json();
+
+  //     data.project.generationStatus = status.status;
+  //     data.project.pdfUrl = status.pdfUrl;
+  //     data.project.epubUrl = status.epubUrl;
+  //     data.project.lastGeneratedAt = status.lastGeneratedAt;
+  //   } catch (error) {
+  //     console.error('Failed to check generation status:', error);
+  //   }
+  // }
 </script>
 
 <svelte:head>
@@ -80,7 +127,10 @@
             プレビュー
           </a>
         {/if}
-        <button class="px-4 py-2 text-sm font-medium rounded-lg filled-primary">
+        <button
+          class="px-4 py-2 text-sm font-medium rounded-lg filled-primary"
+          on:click={() => (showGenerateModal = true)}
+        >
           書籍を生成
         </button>
       </div>
@@ -502,6 +552,75 @@
           </div>
         </div>
       </form>
+    </div>
+  </div>
+{/if}
+
+<!-- Generate Book Modal -->
+{#if showGenerateModal}
+  <div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-md w-full p-6">
+      <h3 class="text-lg font-semibold mb-4">書籍を生成</h3>
+
+      {#if generationError}
+        <div
+          class="bg-error-100 dark:bg-error-900 text-error-700 dark:text-error-300 p-3 rounded-lg mb-4"
+        >
+          {generationError}
+        </div>
+      {/if}
+
+      <p class="text-gray-600 dark:text-gray-400 mb-6">生成するフォーマットを選択してください。</p>
+
+      <div class="space-y-4">
+        {#if data.project.pdfUrl}
+          <div class="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg">
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+              最終生成: {data.project.lastGeneratedAt
+                ? new Date(data.project.lastGeneratedAt).toLocaleString('ja-JP')
+                : 'N/A'}
+            </p>
+            <a href={data.project.pdfUrl} class="text-primary-600 hover:underline text-sm">
+              既存のPDFをダウンロード
+            </a>
+          </div>
+        {/if}
+
+        <button
+          class="w-full px-4 py-3 text-sm font-medium rounded-lg filled-primary disabled:opacity-50"
+          disabled={isGenerating}
+          on:click={() => generateBook('pdf')}
+        >
+          {isGenerating ? '生成中...' : 'PDFを生成'}
+        </button>
+
+        {#if data.project.epubUrl}
+          <div class="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg">
+            <a href={data.project.epubUrl} class="text-primary-600 hover:underline text-sm">
+              既存のePubをダウンロード
+            </a>
+          </div>
+        {/if}
+
+        <button
+          class="w-full px-4 py-3 text-sm font-medium rounded-lg filled-secondary disabled:opacity-50"
+          disabled={isGenerating}
+          on:click={() => generateBook('epub')}
+        >
+          {isGenerating ? '生成中...' : 'ePubを生成'}
+        </button>
+      </div>
+
+      <div class="flex justify-end mt-6">
+        <button
+          type="button"
+          on:click={() => (showGenerateModal = false)}
+          class="px-4 py-2 text-sm font-medium rounded-lg ghost"
+          disabled={isGenerating}
+        >
+          閉じる
+        </button>
+      </div>
     </div>
   </div>
 {/if}

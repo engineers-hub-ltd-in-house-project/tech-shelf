@@ -39,3 +39,9 @@ declare global {
   const FileReader: typeof globalThis.FileReader;
   const DragEvent: typeof globalThis.DragEvent;
 }
+
+// Node.js globals (for server-side code)
+declare const process: {
+  cwd(): string;
+  env: Record<string, string | undefined>;
+};
